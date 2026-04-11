@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🌍 World Country Quest</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #818cf8;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --bg: #0f172a;
+      --card: #1e293b;
+      --card2: #273548;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 80% 20%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 10% 60%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 50%, rgba(255,255,255,.4) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrapper { position: relative; z-index: 1; width: 100%; max-width: 720px; }
+
+    header { text-align: center; margin-bottom: 24px; }
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #818cf8, #38bdf8, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+    header p { color: var(--muted); margin-top: 6px; font-size: 1rem; }
+
+    .progress-wrap { background: var(--card2); border-radius: 999px; height: 10px; margin-bottom: 8px; overflow: hidden; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, #4f46e5, #38bdf8); border-radius: 999px; transition: width .5s ease; }
+    .progress-label { text-align: right; font-size: .8rem; color: var(--muted); margin-bottom: 16px; }
+
+    .score-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--card); border-radius: 16px; padding: 12px 20px;
+      margin-bottom: 20px; border: 1px solid #334155;
+    }
+    .score-item { text-align: center; }
+    .score-item .val { font-size: 1.5rem; font-weight: 800; }
+    .score-item .lbl { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .score-item .val.green { color: var(--success); }
+    .score-item .val.red   { color: var(--danger); }
+    .score-item .val.blue  { color: var(--primary-light); }
+
+    .mode-card {
+      background: var(--card); border: 1px solid #334155; border-radius: 20px;
+      padding: 16px 20px; margin-bottom: 20px;
+      display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+    }
+    .mode-card span { color: var(--muted); font-size: .85rem; white-space: nowrap; }
+    .mode-btn {
+      padding: 6px 14px; border-radius: 999px; border: 2px solid #334155;
+      background: transparent; color: var(--muted); font-family: inherit;
+      font-size: .85rem; font-weight: 700; cursor: pointer; transition: all .2s;
+    }
+    .mode-btn.active, .mode-btn:hover { border-color: var(--primary-light); color: var(--primary-light); background: rgba(79,70,229,.15); }
+
+    .question-card {
+      background: var(--card); border: 1px solid #334155; border-radius: 24px;
+      padding: 28px 24px; margin-bottom: 20px; text-align: center;
+      animation: slideIn .4s ease;
+    }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    .flag-display {
+      font-size: 5rem; line-height: 1; margin-bottom: 16px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,.4));
+      animation: popIn .4s cubic-bezier(.175,.885,.32,1.275);
+    }
+    @keyframes popIn { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    .question-type-badge {
+      display: inline-block; font-size: .72rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .1em;
+      padding: 4px 12px; border-radius: 999px; margin-bottom: 12px;
+    }
+    .badge-flag     { background: rgba(79,70,229,.3);  color: #818cf8; }
+    .badge-capital  { background: rgba(16,185,129,.2); color: #34d399; }
+    .badge-location { background: rgba(245,158,11,.2); color: #fbbf24; }
+    .badge-fact     { background: rgba(239,68,68,.2);  color: #f87171; }
+
+    .question-text { font-size: 1.2rem; font-weight: 700; color: var(--text); line-height: 1.5; }
+
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    @media (max-width: 480px) { .options-grid { grid-template-columns: 1fr; } }
+
+    .option-btn {
+      background: var(--card2); border: 2px solid #334155; border-radius: 16px;
+      padding: 14px 16px; color: var(--text); font-family: inherit;
+      font-size: .95rem; font-weight: 700; cursor: pointer;
+      text-align: left; display: flex; align-items: center; gap: 10px;
+      transition: all .2s; position: relative; overflow: hidden;
+    }
+    .option-btn:hover:not(:disabled) { border-color: var(--primary-light); background: rgba(79,70,229,.15); transform: translateY(-2px); }
+    .option-btn .opt-letter {
+      width: 28px; height: 28px; border-radius: 50%; background: #334155;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .8rem; font-weight: 900; flex-shrink: 0;
+    }
+    .option-btn.correct { border-color: var(--success); background: rgba(16,185,129,.2); animation: pulse .4s ease; }
+    .option-btn.wrong   { border-color: var(--danger);  background: rgba(239,68,68,.15); }
+    .option-btn.correct .opt-letter { background: var(--success); }
+    .option-btn.wrong   .opt-letter { background: var(--danger); }
+    @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.03)} 100%{transform:scale(1)} }
+
+    .feedback { min-height: 48px; border-radius: 14px; padding: 12px 18px; font-size: .95rem; font-weight: 700; text-align: center; opacity: 0; transition: opacity .3s; margin-bottom: 16px; }
+    .feedback.show { opacity: 1; }
+    .feedback.ok  { background: rgba(16,185,129,.2); color: #34d399; border: 1px solid rgba(16,185,129,.4); }
+    .feedback.bad { background: rgba(239,68,68,.15); color: #f87171; border: 1px solid rgba(239,68,68,.3); }
+
+    .next-btn {
+      width: 100%; padding: 16px; border-radius: 16px; border: none;
+      background: linear-gradient(135deg, #4f46e5, #818cf8); color: #fff;
+      font-family: inherit; font-size: 1.05rem; font-weight: 800; cursor: pointer;
+      display: none; align-items: center; justify-content: center; gap: 8px;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 4px 20px rgba(79,70,229,.4);
+    }
+    .next-btn.show { display: flex; }
+    .next-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(79,70,229,.5); }
+
+    #result-screen {
+      display: none; background: var(--card); border: 1px solid #334155;
+      border-radius: 24px; padding: 36px 28px; text-align: center;
+      animation: slideIn .5s ease;
+    }
+    .result-emoji { font-size: 5rem; margin-bottom: 12px; }
+    .result-title { font-size: 2rem; font-weight: 900; margin-bottom: 8px; }
+    .result-sub   { color: var(--muted); margin-bottom: 24px; }
+    .result-score {
+      font-size: 4rem; font-weight: 900;
+      background: linear-gradient(135deg, #818cf8, #38bdf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .result-detail { color: var(--muted); font-size: .9rem; margin-bottom: 28px; }
+    .result-stars  { font-size: 2.5rem; margin-bottom: 24px; letter-spacing: 4px; }
+
+    .replay-btn {
+      padding: 16px 40px; border-radius: 16px; border: none;
+      background: linear-gradient(135deg, #4f46e5, #818cf8); color: #fff;
+      font-family: inherit; font-size: 1.1rem; font-weight: 800; cursor: pointer;
+      box-shadow: 0 4px 20px rgba(79,70,229,.4); transition: transform .15s;
+    }
+    .replay-btn:hover { transform: translateY(-3px); }
+
+    .streak-badge {
+      position: fixed; top: 20px; right: 20px;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: #fff; font-weight: 900; font-size: .9rem;
+      padding: 8px 16px; border-radius: 999px; display: none;
+      z-index: 100; animation: popIn .3s ease;
+      box-shadow: 0 4px 16px rgba(245,158,11,.5);
+    }
+
+    .confetti-piece {
+      position: fixed; width: 10px; height: 10px; border-radius: 2px;
+      animation: confettiFall 1s ease forwards; pointer-events: none; z-index: 999;
+    }
+    @keyframes confettiFall {
+      from { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      to   { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="streak-badge" id="streak-badge">🔥 <span id="streak-num">0</span> Streak!</div>
+
+<div class="wrapper">
+  <header>
+    <h1>🌍 World Country Quest</h1>
+    <p>Test your geography knowledge — flags, capitals & more!</p>
+  </header>
+
+  <div id="quiz-screen">
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+    </div>
+    <div class="progress-label" id="progress-label">Question 1 / 10</div>
+
+    <div class="score-bar">
+      <div class="score-item">
+        <div class="val green" id="correct-count">0</div>
+        <div class="lbl">✅ Correct</div>
+      </div>
+      <div class="score-item">
+        <div class="val red" id="wrong-count">0</div>
+        <div class="lbl">❌ Wrong</div>
+      </div>
+      <div class="score-item">
+        <div class="val blue" id="score-count">0</div>
+        <div class="lbl">⭐ Score</div>
+      </div>
+    </div>
+
+    <div class="mode-card">
+      <span>Mode:</span>
+      <button class="mode-btn active" onclick="setMode(this,'mixed')">🎲 Mixed</button>
+      <button class="mode-btn" onclick="setMode(this,'flag')">🏳️ Flags</button>
+      <button class="mode-btn" onclick="setMode(this,'capital')">🏛️ Capitals</button>
+      <button class="mode-btn" onclick="setMode(this,'location')">🗺️ Continents</button>
+    </div>
+
+    <div class="question-card" id="question-card">
+      <div class="flag-display" id="flag-display">🌍</div>
+      <div class="question-type-badge badge-flag" id="q-badge">Flag</div>
+      <div class="question-text" id="question-text">Loading...</div>
+    </div>
+
+    <div class="options-grid" id="options-grid"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question ➜</button>
+  </div>
+
+  <div id="result-screen">
+    <div class="result-emoji" id="result-emoji">🏆</div>
+    <div class="result-title" id="result-title">Amazing!</div>
+    <div class="result-sub">Here's how you did:</div>
+    <div class="result-score" id="result-score">0</div>
+    <div class="result-detail" id="result-detail"></div>
+    <div class="result-stars" id="result-stars"></div>
+    <button class="replay-btn" onclick="startGame()">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+const COUNTRIES = [
+  { name:"Japan",        flag:"🇯🇵", capital:"Tokyo",          continent:"Asia",          fact:"Known for Mount Fuji and cherry blossoms" },
+  { name:"France",       flag:"🇫🇷", capital:"Paris",          continent:"Europe",        fact:"Home of the Eiffel Tower" },
+  { name:"Brazil",       flag:"🇧🇷", capital:"Brasília",       continent:"South America", fact:"Has the largest rainforest in the world" },
+  { name:"Australia",    flag:"🇦🇺", capital:"Canberra",       continent:"Oceania",       fact:"Home to the kangaroo and koala" },
+  { name:"Egypt",        flag:"🇪🇬", capital:"Cairo",          continent:"Africa",        fact:"Famous for the ancient pyramids" },
+  { name:"USA",          flag:"🇺🇸", capital:"Washington D.C.",continent:"North America", fact:"Has the Grand Canyon" },
+  { name:"India",        flag:"🇮🇳", capital:"New Delhi",      continent:"Asia",          fact:"Home to the Taj Mahal" },
+  { name:"Italy",        flag:"🇮🇹", capital:"Rome",           continent:"Europe",        fact:"Shaped like a boot on the map" },
+  { name:"Canada",       flag:"🇨🇦", capital:"Ottawa",         continent:"North America", fact:"Second largest country by area" },
+  { name:"South Korea",  flag:"🇰🇷", capital:"Seoul",          continent:"Asia",          fact:"Famous for K-pop and kimchi" },
+  { name:"Mexico",       flag:"🇲🇽", capital:"Mexico City",    continent:"North America", fact:"Home of the ancient Aztec Empire" },
+  { name:"Germany",      flag:"🇩🇪", capital:"Berlin",         continent:"Europe",        fact:"Famous for Oktoberfest and the Berlin Wall" },
+  { name:"South Africa", flag:"🇿🇦", capital:"Pretoria",       continent:"Africa",        fact:"Has three capital cities" },
+  { name:"Argentina",    flag:"🇦🇷", capital:"Buenos Aires",   continent:"South America", fact:"Birthplace of tango" },
+  { name:"China",        flag:"🇨🇳", capital:"Beijing",        continent:"Asia",          fact:"Has the Great Wall" },
+  { name:"Russia",       flag:"🇷🇺", capital:"Moscow",         continent:"Europe",        fact:"Largest country in the world" },
+  { name:"Spain",        flag:"🇪🇸", capital:"Madrid",         continent:"Europe",        fact:"Famous for flamenco dance" },
+  { name:"Thailand",     flag:"🇹🇭", capital:"Bangkok",        continent:"Asia",          fact:"Land of temples and street food" },
+  { name:"Nigeria",      flag:"🇳🇬", capital:"Abuja",          continent:"Africa",        fact:"Most populous country in Africa" },
+  { name:"New Zealand",  flag:"🇳🇿", capital:"Wellington",     continent:"Oceania",       fact:"Filming location for The Lord of the Rings" },
+  { name:"Portugal",     flag:"🇵🇹", capital:"Lisbon",         continent:"Europe",        fact:"Famous for pastéis de nata custard tarts" },
+  { name:"Turkey",       flag:"🇹🇷", capital:"Ankara",         continent:"Europe",        fact:"Sits on two continents" },
+  { name:"Peru",         flag:"🇵🇪", capital:"Lima",           continent:"South America", fact:"Home of Machu Picchu" },
+  { name:"Vietnam",      flag:"🇻🇳", capital:"Hanoi",          continent:"Asia",          fact:"Famous for pho and Ha Long Bay" },
+  { name:"Netherlands",  flag:"🇳🇱", capital:"Amsterdam",      continent:"Europe",        fact:"Known for windmills and tulips" },
+  { name:"Greece",       flag:"🇬🇷", capital:"Athens",         continent:"Europe",        fact:"Birthplace of the Olympics" },
+  { name:"Kenya",        flag:"🇰🇪", capital:"Nairobi",        continent:"Africa",        fact:"Home to the Maasai Mara safari" },
+  { name:"Sweden",       flag:"🇸🇪", capital:"Stockholm",      continent:"Europe",        fact:"Land of the midnight sun" },
+  { name:"Indonesia",    flag:"🇮🇩", capital:"Jakarta",        continent:"Asia",          fact:"World's largest archipelago" },
+  { name:"Morocco",      flag:"🇲🇦", capital:"Rabat",          continent:"Africa",        fact:"Famous for its colorful souks" },
+];
+
+function shuffle(arr) { return [...arr].sort(() => Math.random() - .5); }
+
+function makeQuestion(country, all, mode) {
+  const types = ['flag','capital','location','fact'];
+  const type = mode === 'mixed' ? types[Math.floor(Math.random()*types.length)] : mode;
+  const others = shuffle(all.filter(c => c.name !== country.name)).slice(0, 3);
+
+  let q = { type };
+  if (type === 'flag') {
+    q = {...q, badge:'badge-flag', badgeText:'🏳️ Identify the Flag', flag:country.flag,
+      text:`Which country does this flag belong to?`,
+      correct:country.name, options:[country.name, ...others.map(c=>c.name)] };
+  } else if (type === 'capital') {
+    q = {...q, badge:'badge-capital', badgeText:'🏛️ Capital City', flag:country.flag,
+      text:`What is the capital city of ${country.name}?`,
+      correct:country.capital, options:[country.capital, ...others.map(c=>c.capital)] };
+  } else if (type === 'location') {
+    const allContinents = ['Asia','Europe','Africa','North America','South America','Oceania'];
+    let opts = shuffle([country.continent, ...others.map(c=>c.continent)]);
+    const seen = new Set(); opts = opts.filter(o=>{ if(seen.has(o)) return false; seen.add(o); return true; });
+    while(opts.length < 4) { const c = allContinents.find(x=>!opts.includes(x)); if(c) opts.push(c); else break; }
+    q = {...q, badge:'badge-location', badgeText:'🗺️ Continent', flag:country.flag,
+      text:`Which continent is ${country.name} located in?`,
+      correct:country.continent, options:opts.slice(0,4) };
+  } else {
+    q = {...q, badge:'badge-fact', badgeText:'💡 Fun Fact', flag:'🌍',
+      text:`"${country.fact}" — Which country is this about?`,
+      correct:country.name, options:[country.name, ...others.map(c=>c.name)] };
+  }
+
+  q.options = shuffle(q.options).slice(0,4);
+  if (!q.options.includes(q.correct)) { q.options[0] = q.correct; q.options = shuffle(q.options); }
+  return q;
+}
+
+const TOTAL = 10;
+let questions=[], current=0, correct=0, wrong=0, score=0, streak=0, mode='mixed';
+
+function setMode(btn, m) {
+  mode = m;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  startGame();
+}
+
+function startGame() {
+  correct=0; wrong=0; score=0; streak=0; current=0;
+  questions = shuffle(COUNTRIES).slice(0,TOTAL).map(c => makeQuestion(c, COUNTRIES, mode));
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  updateStreakBadge();
+  updateScoreBar();
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  document.getElementById('progress-bar').style.width = (current/TOTAL*100)+'%';
+  document.getElementById('progress-label').textContent = `Question ${current+1} / ${TOTAL}`;
+  document.getElementById('flag-display').textContent = q.flag;
+  document.getElementById('q-badge').className = `question-type-badge ${q.badge}`;
+  document.getElementById('q-badge').textContent = q.badgeText;
+  document.getElementById('question-text').textContent = q.text;
+
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span>${opt}`;
+    btn.onclick = () => selectAnswer(btn, opt, q);
+    grid.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback'; fb.textContent = '';
+  document.getElementById('next-btn').classList.remove('show');
+
+  const card = document.getElementById('question-card');
+  card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'slideIn .4s ease';
+}
+
+function selectAnswer(btn, chosen, q) {
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (chosen === q.correct) {
+    btn.classList.add('correct');
+    streak++;
+    const bonus = streak >= 3 ? streak : 0;
+    score += 10 + bonus; correct++;
+    fb.className = 'feedback ok show';
+    fb.textContent = streak >= 3 ? `🔥 ${streak} in a row! +${10+bonus} pts` : `✅ Correct! +10 pts`;
+    spawnConfetti(btn);
+  } else {
+    btn.classList.add('wrong');
+    streak = 0; wrong++;
+    fb.className = 'feedback bad show';
+    fb.textContent = `❌ Oops! The answer is: ${q.correct}`;
+    document.querySelectorAll('.option-btn').forEach(b => { if(b.textContent.includes(q.correct)) b.classList.add('correct'); });
+  }
+  updateScoreBar(); updateStreakBadge();
+  document.getElementById('next-btn').classList.add('show');
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= TOTAL) showResult();
+  else renderQuestion();
+}
+
+function updateScoreBar() {
+  document.getElementById('correct-count').textContent = correct;
+  document.getElementById('wrong-count').textContent = wrong;
+  document.getElementById('score-count').textContent = score;
+}
+
+function updateStreakBadge() {
+  document.getElementById('streak-num').textContent = streak;
+  document.getElementById('streak-badge').style.display = streak >= 2 ? 'block' : 'none';
+}
+
+function showResult() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'block';
+  const pct = correct / TOTAL * 100;
+  const [emoji, title] =
+    pct===100 ? ['🏆','Perfect Score!'] :
+    pct>=80   ? ['🌟','Excellent!'] :
+    pct>=60   ? ['😊','Good Job!'] :
+    pct>=40   ? ['📚','Keep Studying!'] : ['🌍','Explore More!'];
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-score').textContent = score + ' pts';
+  document.getElementById('result-detail').textContent = `${correct} correct out of ${TOTAL} questions`;
+  document.getElementById('result-stars').textContent = pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':'⭐';
+  if (pct >= 80) setTimeout(() => { for(let i=0;i<40;i++) setTimeout(dropConfetti, i*50); }, 300);
+}
+
+const COLORS = ['#818cf8','#38bdf8','#34d399','#f59e0b','#f87171','#c084fc'];
+function spawnConfetti(btn) {
+  const r = btn.getBoundingClientRect();
+  for(let i=0;i<8;i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `left:${r.left+Math.random()*r.width}px;top:${r.top}px;background:${COLORS[Math.floor(Math.random()*COLORS.length)]};animation-duration:${.6+Math.random()*.6}s;`;
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+  }
+}
+function dropConfetti() {
+  const el = document.createElement('div');
+  el.className = 'confetti-piece';
+  el.style.cssText = `left:${Math.random()*100}vw;top:-20px;background:${COLORS[Math.floor(Math.random()*COLORS.length)]};animation-duration:${.8+Math.random()}s;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;`;
+  document.body.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+}
+
+document.addEventListener('keydown', e => {
+  const map = {'1':'A','2':'B','3':'C','4':'D','a':'A','b':'B','c':'C','d':'D'};
+  const letter = map[e.key.toLowerCase()];
+  if (letter) {
+    const btns = document.querySelectorAll('.option-btn:not(:disabled)');
+    const idx = ['A','B','C','D'].indexOf(letter);
+    if(btns[idx]) btns[idx].click();
+  }
+  if ((e.key==='Enter'||e.key===' ') && document.getElementById('next-btn').classList.contains('show')) nextQuestion();
+});
+
+startGame();
+</script>
+</body>
+</html>
