@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>後寮國小 Houliao Elementary — School Curriculum 校訂課程</title>
+  <style>
+    /* ── Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --sun: #f59e0b; --wind: #06b6d4; --egg: #f97316; --leaf: #22c55e;
+      --sky: #3b82f6; --coral: #ef4444; --purple: #8b5cf6; --pink: #ec4899;
+      --g1: #fde68a; --g2: #bbf7d0; --g3: #bae6fd; --g4: #ddd6fe;
+      --g5: #fecaca; --g6: #fce7f3;
+      --g1d: #d97706; --g2d: #16a34a; --g3d: #0284c7; --g4d: #7c3aed;
+      --g5d: #dc2626; --g6d: #db2777;
+      --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --muted: #64748b;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg); color: var(--text); min-height: 100vh;
+    }
+
+    /* ── Header ───────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 40%, #0891b2 100%);
+      color: white; text-align: center; padding: 48px 24px 36px;
+      position: relative; overflow: hidden;
+    }
+    header::before {
+      content: ''; position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .header-inner { position: relative; z-index: 1; max-width: 900px; margin: auto; }
+    .school-badge {
+      display: inline-block; background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3); border-radius: 999px;
+      padding: 6px 18px; font-size: 13px; letter-spacing: 0.05em;
+      margin-bottom: 16px;
+    }
+    .school-badge .zh { font-size: 11px; opacity: 0.8; }
+    header h1 {
+      font-size: clamp(28px, 5vw, 48px); font-weight: 800;
+      line-height: 1.15; margin-bottom: 10px;
+    }
+    header h1 .zh { display: block; font-size: clamp(14px, 2.5vw, 22px); font-weight: 400; opacity: 0.85; margin-top: 4px; }
+    header p.subtitle { font-size: clamp(14px, 2vw, 18px); opacity: 0.8; margin-bottom: 6px; }
+    header p.subtitle .zh { font-size: 12px; opacity: 0.7; }
+    .header-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 20px; }
+    .tag {
+      background: rgba(255,255,255,0.2); border-radius: 999px;
+      padding: 4px 14px; font-size: 12px; border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    /* ── Tabs ─────────────────────────────────────────── */
+    .tab-nav {
+      display: flex; justify-content: center; gap: 0;
+      background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .tab-btn {
+      flex: 1; max-width: 340px; padding: 18px 24px; border: none;
+      background: transparent; cursor: pointer; font-size: 15px;
+      font-weight: 600; border-bottom: 3px solid transparent;
+      transition: all 0.25s; display: flex; align-items: center;
+      justify-content: center; gap: 10px; color: var(--muted);
+    }
+    .tab-btn .zh { font-size: 11px; font-weight: 400; }
+    .tab-btn:hover { background: #f1f5f9; }
+    .tab-btn.active.wind-tab { color: var(--wind); border-color: var(--wind); background: #ecfeff; }
+    .tab-btn.active.egg-tab  { color: var(--egg);  border-color: var(--egg);  background: #fff7ed; }
+    .tab-btn .icon { font-size: 22px; }
+
+    /* ── Panel ────────────────────────────────────────── */
+    .panel { display: none; padding: 40px 20px 60px; max-width: 1100px; margin: auto; }
+    .panel.active { display: block; }
+
+    /* ── Theme Banner ─────────────────────────────────── */
+    .theme-banner {
+      border-radius: 20px; padding: 32px 36px; margin-bottom: 40px;
+      display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    }
+    .wind-banner { background: linear-gradient(135deg, #0e7490, #06b6d4, #22d3ee); color: white; }
+    .egg-banner  { background: linear-gradient(135deg, #c2410c, #ea580c, #fb923c); color: white; }
+    .theme-banner .big-icon { font-size: 64px; line-height: 1; }
+    .theme-banner-text h2 { font-size: clamp(22px, 4vw, 36px); font-weight: 800; }
+    .theme-banner-text h2 .zh { font-size: clamp(12px, 2vw, 18px); font-weight: 400; opacity: 0.85; display: block; margin-top: 4px; }
+    .theme-banner-text p { font-size: clamp(13px, 1.8vw, 16px); opacity: 0.9; margin-top: 10px; max-width: 560px; }
+    .theme-banner-text p .zh { font-size: 12px; opacity: 0.8; display: block; margin-top: 3px; }
+    .sdg-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    .sdg-chip {
+      background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 999px; padding: 3px 12px; font-size: 12px; font-weight: 600;
+    }
+
+    /* ── Stats Row ────────────────────────────────────── */
+    .stats-row { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 40px; }
+    .stat-card {
+      flex: 1; min-width: 140px; background: white; border-radius: 14px;
+      padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      border-top: 4px solid transparent;
+    }
+    .stat-card .num { font-size: 32px; font-weight: 800; line-height: 1; }
+    .stat-card .label { font-size: 13px; color: var(--muted); margin-top: 6px; }
+    .stat-card .label .zh { font-size: 11px; display: block; }
+
+    /* ── Section Title ────────────────────────────────── */
+    .section-title {
+      font-size: clamp(18px, 3vw, 26px); font-weight: 700; margin-bottom: 6px;
+    }
+    .section-title .zh { font-size: clamp(11px, 1.5vw, 14px); font-weight: 400; color: var(--muted); display: block; margin-top: 2px; }
+    .section-desc { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+    .section-desc .zh { font-size: 11px; }
+
+    /* ── Unit Grid ────────────────────────────────────── */
+    .units-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px; margin-bottom: 48px;
+    }
+
+    /* ── Unit Card ────────────────────────────────────── */
+    .unit-card {
+      background: white; border-radius: 18px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+      overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer; position: relative;
+    }
+    .unit-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,0.12); }
+    .unit-card-header {
+      padding: 20px 22px 14px; position: relative;
+    }
+    .unit-number {
+      position: absolute; top: 16px; right: 18px;
+      font-size: 40px; font-weight: 900; opacity: 0.12; line-height: 1;
+    }
+    .grade-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      border-radius: 999px; padding: 4px 12px; font-size: 11px; font-weight: 700;
+      margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .unit-title {
+      font-size: clamp(16px, 2.5vw, 20px); font-weight: 700; line-height: 1.3;
+      margin-bottom: 4px;
+    }
+    .unit-title-zh { font-size: clamp(11px, 1.5vw, 13px); color: var(--muted); margin-bottom: 12px; }
+    .unit-desc { font-size: 13px; color: #475569; line-height: 1.6; }
+    .unit-desc .zh { font-size: 11px; color: var(--muted); display: block; margin-top: 3px; }
+    .unit-card-body { padding: 0 22px 20px; }
+    .unit-details { display: flex; flex-direction: column; gap: 10px; }
+    .detail-row { display: flex; gap: 8px; }
+    .detail-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+    .detail-text { font-size: 12.5px; color: #475569; }
+    .detail-text strong { display: block; font-size: 13px; color: var(--text); font-weight: 600; }
+    .detail-text .zh { font-size: 10.5px; color: var(--muted); }
+    .unit-card-footer { padding: 14px 22px; border-top: 1px solid #f1f5f9; }
+    .activity-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      background: #f1f5f9; border-radius: 999px; padding: 3px 10px;
+      font-size: 11px; color: #475569; border: 1px solid #e2e8f0;
+    }
+
+    /* Grade colors */
+    .grade-1 .unit-card-header { background: linear-gradient(135deg, #fef9c3, #fde68a20); }
+    .grade-2 .unit-card-header { background: linear-gradient(135deg, #dcfce7, #bbf7d020); }
+    .grade-3 .unit-card-header { background: linear-gradient(135deg, #dbeafe, #bae6fd20); }
+    .grade-4 .unit-card-header { background: linear-gradient(135deg, #ede9fe, #ddd6fe20); }
+    .grade-5 .unit-card-header { background: linear-gradient(135deg, #fee2e2, #fecaca20); }
+    .grade-6 .unit-card-header { background: linear-gradient(135deg, #fce7f3, #fce7f320); }
+
+    .grade-1 .grade-badge { background: var(--g1); color: var(--g1d); }
+    .grade-2 .grade-badge { background: var(--g2); color: var(--g2d); }
+    .grade-3 .grade-badge { background: var(--g3); color: var(--g3d); }
+    .grade-4 .grade-badge { background: var(--g4); color: var(--g4d); }
+    .grade-5 .grade-badge { background: var(--g5); color: var(--g5d); }
+    .grade-6 .grade-badge { background: var(--g6); color: var(--g6d); }
+
+    .grade-1 .unit-number { color: var(--g1d); }
+    .grade-2 .unit-number { color: var(--g2d); }
+    .grade-3 .unit-number { color: var(--g3d); }
+    .grade-4 .unit-number { color: var(--g4d); }
+    .grade-5 .unit-number { color: var(--g5d); }
+    .grade-6 .unit-number { color: var(--g6d); }
+
+    /* ── Grade Legend ─────────────────────────────────── */
+    .grade-legend {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; align-items: center;
+    }
+    .grade-legend span { font-size: 12px; font-weight: 600; color: var(--muted); margin-right: 4px; }
+    .legend-item {
+      display: flex; align-items: center; gap: 6px;
+      border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 600;
+    }
+    .legend-item .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .l1 { background: var(--g1); color: var(--g1d); }
+    .l2 { background: var(--g2); color: var(--g2d); }
+    .l3 { background: var(--g3); color: var(--g3d); }
+    .l4 { background: var(--g4); color: var(--g4d); }
+    .l5 { background: var(--g5); color: var(--g5d); }
+    .l6 { background: var(--g6); color: var(--g6d); }
+
+    /* ── Inquiry Steps ────────────────────────────────── */
+    .inquiry-section { background: white; border-radius: 18px; padding: 32px; margin-bottom: 40px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .inquiry-steps { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 20px; }
+    .step {
+      flex: 1; min-width: 130px; background: #f8fafc; border-radius: 14px;
+      padding: 18px; text-align: center; border: 2px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .step:hover { border-color: var(--wind); }
+    .step-num { width: 36px; height: 36px; border-radius: 50%; background: var(--wind); color: white; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; }
+    .step-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .step-zh { font-size: 10px; color: var(--muted); }
+    .step-desc { font-size: 11px; color: #64748b; margin-top: 6px; }
+
+    /* ── SDG Reference ───────────────────────────────── */
+    .sdg-ref {
+      background: linear-gradient(135deg, #1e3a8a10, #06b6d410);
+      border: 1px solid #bae6fd; border-radius: 14px; padding: 20px;
+      margin-bottom: 28px;
+    }
+    .sdg-ref-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #0369a1; }
+    .sdg-ref-title .zh { font-size: 10px; font-weight: 400; }
+    .sdg-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .sdg-item {
+      display: flex; align-items: center; gap: 6px;
+      background: white; border-radius: 10px; padding: 6px 12px;
+      font-size: 12px; border: 1px solid #e0f2fe;
+    }
+    .sdg-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; flex-shrink: 0; }
+    .sdg-text strong { display: block; font-size: 12px; }
+    .sdg-text span { font-size: 10px; color: var(--muted); }
+
+    /* ── Modal ────────────────────────────────────────── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+      z-index: 200; justify-content: center; align-items: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white; border-radius: 24px; max-width: 640px; width: 100%;
+      max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+      animation: modalIn 0.25s ease;
+    }
+    @keyframes modalIn { from { transform: scale(0.92) translateY(20px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+    .modal-header { padding: 28px 28px 20px; border-bottom: 1px solid #f1f5f9; }
+    .modal-close {
+      float: right; background: #f1f5f9; border: none; border-radius: 50%;
+      width: 36px; height: 36px; font-size: 18px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; color: #64748b;
+    }
+    .modal-close:hover { background: #e2e8f0; }
+    .modal-body { padding: 24px 28px 28px; }
+    .modal-section { margin-bottom: 20px; }
+    .modal-section h4 { font-size: 14px; font-weight: 700; color: #0369a1; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .modal-section h4 .zh { font-size: 10px; font-weight: 400; color: var(--muted); }
+    .modal-section ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .modal-section ul li { font-size: 13px; color: #475569; padding-left: 18px; position: relative; }
+    .modal-section ul li::before { content: '→'; position: absolute; left: 0; color: #94a3b8; }
+    .modal-section ul li .zh { font-size: 10.5px; color: var(--muted); display: block; }
+    .lesson-timeline { display: flex; flex-direction: column; gap: 10px; }
+    .lesson-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      background: #f8fafc; border-radius: 10px; padding: 10px 14px;
+    }
+    .lesson-num { width: 28px; height: 28px; border-radius: 50%; color: white; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .lesson-content strong { display: block; font-size: 13px; font-weight: 600; }
+    .lesson-content span { font-size: 11px; color: var(--muted); }
+    .lesson-content .zh { font-size: 10px; color: #94a3b8; display: block; }
+
+    /* ── Footer ───────────────────────────────────────── */
+    footer {
+      background: #1e293b; color: #94a3b8; text-align: center;
+      padding: 36px 20px; font-size: 13px;
+    }
+    footer .zh { font-size: 11px; display: block; margin-top: 4px; }
+    footer strong { color: white; }
+
+    /* ── Responsive ───────────────────────────────────── */
+    @media (max-width: 600px) {
+      .units-grid { grid-template-columns: 1fr; }
+      .theme-banner { flex-direction: column; gap: 16px; }
+    }
+
+    /* ── Animations ───────────────────────────────────── */
+    .fade-in { animation: fadeIn 0.4s ease both; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .unit-card { animation: fadeIn 0.35s ease both; }
+    .unit-card:nth-child(2) { animation-delay: 0.04s; }
+    .unit-card:nth-child(3) { animation-delay: 0.08s; }
+    .unit-card:nth-child(4) { animation-delay: 0.12s; }
+    .unit-card:nth-child(5) { animation-delay: 0.16s; }
+    .unit-card:nth-child(6) { animation-delay: 0.20s; }
+    .unit-card:nth-child(7) { animation-delay: 0.24s; }
+    .unit-card:nth-child(8) { animation-delay: 0.28s; }
+    .unit-card:nth-child(9) { animation-delay: 0.32s; }
+    .unit-card:nth-child(10){ animation-delay: 0.36s; }
+    .unit-card:nth-child(11){ animation-delay: 0.40s; }
+    .unit-card:nth-child(12){ animation-delay: 0.44s; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════ HEADER ══════════════════ -->
+<header>
+  <div class="header-inner">
+    <div class="school-badge">
+      Houliao Elementary School &nbsp;|&nbsp; <span class="zh">彰化縣芳苑鄉後寮國民小學</span>
+    </div>
+    <h1>
+      School-Based Curriculum Design
+      <span class="zh">校訂課程設計 ── 兩大主題 × 各 12 單元</span>
+    </h1>
+    <p class="subtitle">
+      Grades 1–6 &nbsp;·&nbsp; 20 lessons per semester &nbsp;·&nbsp; Bilingual (EN / ZH)
+      <span class="zh">一至六年級 &nbsp;·&nbsp; 每學期 20 節 &nbsp;·&nbsp; 雙語課程</span>
+    </p>
+    <div class="header-tags">
+      <span class="tag">☀️ SDG 7 Clean Energy</span>
+      <span class="tag">🌬️ Wind Power</span>
+      <span class="tag">🥚 Egg Industry</span>
+      <span class="tag">🔍 Reading Inquiry</span>
+      <span class="tag">🌱 Fangyuan Township</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════ TABS ══════════════════ -->
+<nav class="tab-nav">
+  <button class="tab-btn wind-tab active" onclick="switchTab('wind')">
+    <span class="icon">☀️🌬️</span>
+    <span>
+      Wind &amp; Solar Miracle
+      <span class="zh">風光奇蹟</span>
+    </span>
+  </button>
+  <button class="tab-btn egg-tab" onclick="switchTab('egg')">
+    <span class="icon">🥚🐔</span>
+    <span>
+      Egg Birth Miracle
+      <span class="zh">蛋生奇蹟</span>
+    </span>
+  </button>
+</nav>
+
+<!-- ══════════════════ WIND PANEL ══════════════════ -->
+<div id="panel-wind" class="panel active">
+
+  <div class="theme-banner wind-banner fade-in">
+    <div class="big-icon">☀️🌬️</div>
+    <div class="theme-banner-text">
+      <h2>Wind &amp; Solar Miracle <span class="zh">風光奇蹟</span></h2>
+      <p>
+        Connecting Fangyuan's coastal landscape to global clean energy goals through Reading Inquiry.
+        <span class="zh">結合芳苑海岸地景與全球潔淨能源目標，採閱讀探究教學法。</span>
+      </p>
+      <div class="sdg-chips">
+        <span class="sdg-chip">SDG 4 Quality Education</span>
+        <span class="sdg-chip">SDG 7 Clean Energy</span>
+        <span class="sdg-chip">SDG 11 Sustainable Cities</span>
+        <span class="sdg-chip">SDG 13 Climate Action</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row fade-in">
+    <div class="stat-card" style="border-color:#06b6d4">
+      <div class="num" style="color:#0891b2">2.4 GW</div>
+      <div class="label">Greater Changhua Offshore Wind <span class="zh">大彰化離岸風場容量</span></div>
+    </div>
+    <div class="stat-card" style="border-color:#f59e0b">
+      <div class="num" style="color:#d97706">300K+</div>
+      <div class="label">Solar Panels at Changbin Farm <span class="zh">彰濱光電場太陽能板數</span></div>
+    </div>
+    <div class="stat-card" style="border-color:#22c55e">
+      <div class="num" style="color:#16a34a">340M</div>
+      <div class="label">kWh / year (Changbin) <span class="zh">彰濱年發電量（度）</span></div>
+    </div>
+    <div class="stat-card" style="border-color:#8b5cf6">
+      <div class="num" style="color:#7c3aed">50+</div>
+      <div class="label">Planned Wind Turbines in Fangyuan <span class="zh">芳苑鄉規劃風機數量</span></div>
+    </div>
+  </div>
+
+  <!-- Reading Inquiry Method -->
+  <div class="inquiry-section fade-in">
+    <div class="section-title">
+      Reading Inquiry Framework
+      <span class="zh">閱讀探究教學法架構</span>
+    </div>
+    <div class="inquiry-steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Wonder <span class="step-zh">提問</span></div>
+        <div class="step-desc">Spark curiosity with big questions about energy</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Read <span class="step-zh">閱讀</span></div>
+        <div class="step-desc">Explore texts, data, and local news articles</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Investigate <span class="step-zh">探究</span></div>
+        <div class="step-desc">Observe, measure, and experiment outdoors</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-title">Connect <span class="step-zh">連結</span></div>
+        <div class="step-desc">Link findings to SDGs and community life</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-title">Create <span class="step-zh">創作</span></div>
+        <div class="step-desc">Present ideas through posters, skits, or proposals</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SDG Reference -->
+  <div class="sdg-ref fade-in">
+    <div class="sdg-ref-title">Relevant SDG Goals <span class="zh">對應永續發展目標</span></div>
+    <div class="sdg-grid">
+      <div class="sdg-item">
+        <div class="sdg-icon" style="background:#e5233d">4</div>
+        <div class="sdg-text"><strong>Quality Education</strong><span>優質教育</span></div>
+      </div>
+      <div class="sdg-item">
+        <div class="sdg-icon" style="background:#fcc30b">7</div>
+        <div class="sdg-text"><strong>Affordable Clean Energy</strong><span>潔淨能源</span></div>
+      </div>
+      <div class="sdg-item">
+        <div class="sdg-icon" style="background:#fd6925">11</div>
+        <div class="sdg-text"><strong>Sustainable Cities</strong><span>永續城鄉</span></div>
+      </div>
+      <div class="sdg-item">
+        <div class="sdg-icon" style="background:#3f7e44">13</div>
+        <div class="sdg-text"><strong>Climate Action</strong><span>氣候行動</span></div>
+      </div>
+      <div class="sdg-item">
+        <div class="sdg-icon" style="background:#0a97d9">16</div>
+        <div class="sdg-text"><strong>Peace &amp; Justice</strong><span>和平正義</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grade Legend -->
+  <div class="grade-legend fade-in">
+    <span>Grade <span style="font-size:10px">年級</span>:</span>
+    <div class="legend-item l1">Grade 1 &nbsp;<span style="font-size:10px">一年級</span></div>
+    <div class="legend-item l2">Grade 2 &nbsp;<span style="font-size:10px">二年級</span></div>
+    <div class="legend-item l3">Grade 3 &nbsp;<span style="font-size:10px">三年級</span></div>
+    <div class="legend-item l4">Grade 4 &nbsp;<span style="font-size:10px">四年級</span></div>
+    <div class="legend-item l5">Grade 5 &nbsp;<span style="font-size:10px">五年級</span></div>
+    <div class="legend-item l6">Grade 6 &nbsp;<span style="font-size:10px">六年級</span></div>
+  </div>
+
+  <div class="section-title fade-in">
+    12 Curriculum Units
+    <span class="zh">12 個課程單元</span>
+  </div>
+  <p class="section-desc fade-in">
+    Click any unit card to see the full lesson plan. <span class="zh">點擊任一單元卡片，可展開完整教案。</span>
+  </p>
+
+  <!-- Units Grid -->
+  <div class="units-grid">
+
+    <!-- Unit W1 -->
+    <div class="unit-card grade-1" onclick="openModal('w1')">
+      <div class="unit-card-header">
+        <div class="unit-number">01</div>
+        <div class="grade-badge">⭐ Grade 1 &nbsp;<span class="zh">一年級</span></div>
+        <div class="unit-title">The Sun Gives Us Life</div>
+        <div class="unit-title-zh">太陽給我們生命</div>
+        <div class="unit-desc">Discover how sunlight powers everything around us — from plants to people.<span class="zh">探索陽光如何驅動我們周遭的一切——從植物到人類。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>What would happen if the sun disappeared for one day?</span><span class="zh">如果太陽消失一天會怎樣？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Picture book: <em>The Sun's Big Job</em></span><span class="zh">繪本閱讀：太陽的大工作</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Sun journal 日誌</span>
+          <span class="chip">Shadow play 影子遊戲</span>
+          <span class="chip">Drawing 繪圖</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit W2 -->
+    <div class="unit-card grade-1" onclick="openModal('w2')">
+      <div class="unit-card-header">
+        <div class="unit-number">02</div>
+        <div class="grade-badge">⭐ Grade 1 &nbsp;<span class="zh">一年級</span></div>
+        <div class="unit-title">Wind Is Invisible but Real</div>
+        <div class="unit-title-zh">風看不見，但真實存在</div>
+        <div class="unit-desc">Experience wind through senses and simple experiments. What can wind do?<span class="zh">透過感官與簡單實驗體驗風。風能做什麼？</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>Can you catch the wind? How do we know it's there?</span><span class="zh">你能抓住風嗎？我們怎麼知道風在那裡？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Picture book: <em>Feel the Wind</em></span><span class="zh">繪本閱讀：感受風</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Pinwheel craft 風車製作</span>
+          <span class="chip">Outdoor walk 戶外探索</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit W3 -->
+    <div class="unit-card grade-2" onclick="openModal('w3')">
+      <div class="unit-card-header">
+        <div class="unit-number">03</div>
+        <div class="grade-badge">🌿 Grade 2 &nbsp;<span class="zh">二年級</span></div>
+        <div class="unit-title">Solar Energy: Catching Sunlight</div>
+        <div class="unit-title-zh">太陽能：捕捉陽光</div>
+        <div class="unit-desc">Learn how solar panels turn sunlight into the electricity we use every day.<span class="zh">學習太陽能板如何將陽光轉換為我們每天使用的電。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>How does sunlight become the electricity in our lights?</span><span class="zh">陽光如何變成我們電燈裡的電？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Article: <em>How Solar Panels Work</em> (adapted)</span><span class="zh">改編文章：太陽能板如何運作</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Solar toy demo 太陽能玩具</span>
+          <span class="chip">Diagram reading 圖解閱讀</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit W4 -->
+    <div class="unit-card grade-2" onclick="openModal('w4')">
+      <div class="unit-card-header">
+        <div class="unit-number">04</div>
+        <div class="grade-badge">🌿 Grade 2 &nbsp;<span class="zh">二年級</span></div>
+        <div class="unit-title">Wind Turbines: Giants in the Sea</div>
+        <div class="unit-title-zh">風機：海上巨人</div>
+        <div class="unit-desc">Explore how offshore wind turbines near Fangyuan generate clean electricity.<span class="zh">探索芳苑附近的離岸風機如何產生潔淨電力。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>Why are the turbines built out at sea, not on land?</span><span class="zh">為什麼風機建在海上而不是陸地上？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Photo-essay: <em>Wind Farms of Changhua</em></span><span class="zh">圖文故事：彰化風場</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Scale model 比例尺模型</span>
+          <span class="chip">Map reading 地圖閱讀</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit W5 -->
+    <div class="unit-card grade-3" onclick="openModal('w5')">
+      <div class="unit-card-header">
+        <div class="unit-number">05</div>
+        <div class="grade-badge">🌊 Grade 3 &nbsp;<span class="zh">三年級</span></div>
+        <div class="unit-title">Our School's Solar Roof</div>
+        <div class="unit-title-zh">我們學校的太陽能屋頂</div>
+        <div class="unit-desc">Investigate the solar panels on our school campus. Read the data they produce!<span class="zh">調查校園太陽能板，閱讀它們產生的發電數據！</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>How much electricity does our school make from sunshine?</span><span class="zh">我們學校從陽光中產生多少電？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Data sheet + infographic from school energy monitor</span><span class="zh">學校發電監測數據表與資訊圖</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Data recording 數據記錄</span>
+          <span class="chip">Bar chart 長條圖</span>
+          <span class="chip">Campus tour 校園參觀</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit W6 -->
+    <div class="unit-card grade-3" onclick="openModal('w6')">
+      <div class="unit-card-header">
+        <div class="unit-number">06</div>
+        <div class="grade-badge">🌊 Grade 3 &nbsp;<span class="zh">三年級</span></div>
+        <div class="unit-title">What Are SDGs? A Global Promise</div>
+        <div class="unit-title-zh">什麼是永續發展目標？全球的承諾</div>
+        <div class="unit-desc">Discover the United Nations' 17 goals and connect them to Fangyuan's landscape.<span class="zh">探索聯合國 17 個目標，連結芳苑的地方景觀。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>Can a small village like ours help change the whole world?</span><span class="zh">像我們這樣的小村莊也能改變世界嗎？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>UN SDG wheel poster + simplified text cards</span><span class="zh">聯合國 SDGs 輪狀海報與文字卡</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 3 lessons &nbsp;<span class="zh">3 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">SDG sorting game 分類遊戲</span>
+          <span class="chip">Local connection 在地連結</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit W7 -->
+    <div class="unit-card grade-4" onclick="openModal('w7')">
+      <div class="unit-card-header">
+        <div class="unit-number">07</div>
+        <div class="grade-badge">💜 Grade 4 &nbsp;<span class="zh">四年級</span></div>
+        <div class="unit-title">Changbin Solar Farm: 300,000 Panels!</div>
+        <div class="unit-title-zh">彰濱光電場：三十萬片太陽能板！</div>
+        <div class="unit-desc">Study Taiwan's largest solar farm, just down the coast. Numbers, maps, and impact.<span class="zh">研究台灣最大的太陽能場──就在我們海岸附近。數字、地圖與影響。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>How many homes can 300,000 solar panels power?</span><span class="zh">三十萬片太陽能板能供應多少戶家庭用電？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Taipower Changbin report + news article</span><span class="zh">台電彰濱光電場報告與新聞文章</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Math estimation 數學估算</span>
+          <span class="chip">Field visit 實地參觀</span>
+          <span class="chip">Infographic 資訊圖</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit W8 -->
+    <div class="unit-card grade-4" onclick="openModal('w8')">
+      <div class="unit-card-header">
+        <div class="unit-number">08</div>
+        <div class="grade-badge">💜 Grade 4 &nbsp;<span class="zh">四年級</span></div>
+        <div class="unit-title">Carbon Footprint: What's Mine?</div>
+        <div class="unit-title-zh">碳足跡：我的碳有多少？</div>
+        <div class="unit-desc">Calculate the carbon footprint of daily activities and learn how clean energy helps.<span class="zh">計算日常活動的碳足跡，了解潔淨能源如何幫助減碳。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>Is riding a bike really better than driving a car for the planet?</span><span class="zh">騎腳踏車真的比開車對地球更好嗎？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Carbon calculator worksheet + comparison chart</span><span class="zh">碳足跡計算學習單與比較圖表</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 3 lessons &nbsp;<span class="zh">3 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Carbon calc 碳計算</span>
+          <span class="chip">Peer debate 同儕辯論</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit W9 -->
+    <div class="unit-card grade-5" onclick="openModal('w9')">
+      <div class="unit-card-header">
+        <div class="unit-number">09</div>
+        <div class="grade-badge">❤️ Grade 5 &nbsp;<span class="zh">五年級</span></div>
+        <div class="unit-title">Offshore Wind: Greater Changhua Farm</div>
+        <div class="unit-title-zh">離岸風電：大彰化風場</div>
+        <div class="unit-desc">Deep-dive into the 2.4 GW offshore wind project powering 2.8 million Taiwanese homes.<span class="zh">深入研究 2.4GW 離岸風電計畫，為 280 萬戶台灣家庭供電。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>What skills do workers need to build wind turbines at sea?</span><span class="zh">在海上建造風機需要什麼技能？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Ørsted project report + career profiles</span><span class="zh">Ørsted 計畫報告與職業介紹</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Career explore 職涯探索</span>
+          <span class="chip">Scale drawing 比例繪圖</span>
+          <span class="chip">Interview 訪談</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit W10 -->
+    <div class="unit-card grade-5" onclick="openModal('w10')">
+      <div class="unit-card-header">
+        <div class="unit-number">10</div>
+        <div class="grade-badge">❤️ Grade 5 &nbsp;<span class="zh">五年級</span></div>
+        <div class="unit-title">Clean Energy Around the World</div>
+        <div class="unit-title-zh">全球潔淨能源面面觀</div>
+        <div class="unit-desc">Compare how different countries — Denmark, Germany, Iceland — use renewable energy.<span class="zh">比較丹麥、德國、冰島等不同國家如何使用再生能源。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>Which country is the clean energy champion, and why?</span><span class="zh">哪個國家是潔淨能源冠軍？為什麼？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Country data cards + world energy map</span><span class="zh">各國數據卡與世界能源地圖</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 3 lessons &nbsp;<span class="zh">3 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Country report 國家報告</span>
+          <span class="chip">Data comparison 數據比較</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit W11 -->
+    <div class="unit-card grade-6" onclick="openModal('w11')">
+      <div class="unit-card-header">
+        <div class="unit-number">11</div>
+        <div class="grade-badge">🌸 Grade 6 &nbsp;<span class="zh">六年級</span></div>
+        <div class="unit-title">Energy Justice: Where Should Turbines Go?</div>
+        <div class="unit-title-zh">能源正義：風機應該建在哪裡？</div>
+        <div class="unit-desc">Debate the real controversy: 50 large turbines are planned for Fangyuan. Who decides?<span class="zh">辯論真實議題：50 座大型風機預計在芳苑興建。誰來決定？</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>Is it fair to put wind turbines in a farming and fishing village?</span><span class="zh">把風機建在農漁業小鄉鎮，公平嗎？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Local news articles + resident testimonials</span><span class="zh">地方新聞報導與居民心聲</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Role play 角色扮演</span>
+          <span class="chip">Town hall 公聽會模擬</span>
+          <span class="chip">Editorial 社論寫作</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit W12 -->
+    <div class="unit-card grade-6" onclick="openModal('w12')">
+      <div class="unit-card-header">
+        <div class="unit-number">12</div>
+        <div class="grade-badge">🌸 Grade 6 &nbsp;<span class="zh">六年級</span></div>
+        <div class="unit-title">Our Village's Clean Energy Future</div>
+        <div class="unit-title-zh">我們村莊的潔淨能源未來</div>
+        <div class="unit-desc">Design a community energy action plan for Fangyuan using everything you've learned.<span class="zh">運用所學，為芳苑設計一份社區能源行動計畫。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>What kind of energy future do we want for Houliao Village?</span><span class="zh">我們希望後寮村有什麼樣的能源未來？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Community energy plan examples from other schools</span><span class="zh">其他學校社區能源計畫範例</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Action plan 行動計畫</span>
+          <span class="chip">Presentation 成果發表</span>
+          <span class="chip">Community share 社區分享</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /units-grid -->
+</div><!-- /panel-wind -->
+
+
+<!-- ══════════════════ EGG PANEL ══════════════════ -->
+<div id="panel-egg" class="panel">
+
+  <div class="theme-banner egg-banner fade-in">
+    <div class="big-icon">🥚🐔</div>
+    <div class="theme-banner-text">
+      <h2>Egg Birth Miracle <span class="zh">蛋生奇蹟</span></h2>
+      <p>
+        Fangyuan produces nearly half of Taiwan's eggs. Explore the science, culture, and ethics behind every egg.
+        <span class="zh">芳苑生產全台近一半的雞蛋。探索每顆雞蛋背後的科學、文化與倫理。</span>
+      </p>
+      <div class="sdg-chips">
+        <span class="sdg-chip">SDG 2 Zero Hunger</span>
+        <span class="sdg-chip">SDG 12 Responsible Production</span>
+        <span class="sdg-chip">SDG 15 Life on Land</span>
+        <span class="sdg-chip">Local Food Culture</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row fade-in">
+    <div class="stat-card" style="border-color:#f97316">
+      <div class="num" style="color:#c2410c">~50%</div>
+      <div class="label">of Taiwan's eggs from Fangyuan area <span class="zh">芳苑地區占全台雞蛋產量</span></div>
+    </div>
+    <div class="stat-card" style="border-color:#eab308">
+      <div class="num" style="color:#ca8a04">382</div>
+      <div class="label">Egg farms in Fangyuan <span class="zh">芳苑鄉蛋雞場數量</span></div>
+    </div>
+    <div class="stat-card" style="border-color:#22c55e">
+      <div class="num" style="color:#15803d">8.3B</div>
+      <div class="label">Eggs produced in Taiwan per year <span class="zh">全台年產雞蛋數（顆）</span></div>
+    </div>
+    <div class="stat-card" style="border-color:#ef4444">
+      <div class="num" style="color:#dc2626">44.9%</div>
+      <div class="label">Taiwan's egg chickens in Changhua <span class="zh">全台蛋雞在彰化縣的比例</span></div>
+    </div>
+  </div>
+
+  <!-- SDG Reference -->
+  <div class="sdg-ref fade-in" style="background: linear-gradient(135deg, #fff7ed, #fed7aa20); border-color: #fdba74;">
+    <div class="sdg-ref-title" style="color: #c2410c;">Relevant SDG Goals <span class="zh">對應永續發展目標</span></div>
+    <div class="sdg-grid">
+      <div class="sdg-item">
+        <div class="sdg-icon" style="background:#dda63a">2</div>
+        <div class="sdg-text"><strong>Zero Hunger</strong><span>消除飢餓</span></div>
+      </div>
+      <div class="sdg-item">
+        <div class="sdg-icon" style="background:#bf8b2e">12</div>
+        <div class="sdg-text"><strong>Responsible Production</strong><span>責任生產與消費</span></div>
+      </div>
+      <div class="sdg-item">
+        <div class="sdg-icon" style="background:#56c02b">15</div>
+        <div class="sdg-text"><strong>Life on Land</strong><span>陸域生態</span></div>
+      </div>
+      <div class="sdg-item">
+        <div class="sdg-icon" style="background:#fd9d24">3</div>
+        <div class="sdg-text"><strong>Good Health</strong><span>健康與福祉</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grade Legend -->
+  <div class="grade-legend fade-in">
+    <span>Grade <span style="font-size:10px">年級</span>:</span>
+    <div class="legend-item l1">Grade 1 &nbsp;<span style="font-size:10px">一年級</span></div>
+    <div class="legend-item l2">Grade 2 &nbsp;<span style="font-size:10px">二年級</span></div>
+    <div class="legend-item l3">Grade 3 &nbsp;<span style="font-size:10px">三年級</span></div>
+    <div class="legend-item l4">Grade 4 &nbsp;<span style="font-size:10px">四年級</span></div>
+    <div class="legend-item l5">Grade 5 &nbsp;<span style="font-size:10px">五年級</span></div>
+    <div class="legend-item l6">Grade 6 &nbsp;<span style="font-size:10px">六年級</span></div>
+  </div>
+
+  <div class="section-title fade-in">
+    12 Curriculum Units
+    <span class="zh">12 個課程單元</span>
+  </div>
+  <p class="section-desc fade-in">
+    Click any unit card to see the full lesson plan. <span class="zh">點擊任一單元卡片，可展開完整教案。</span>
+  </p>
+
+  <div class="units-grid">
+
+    <!-- Unit E1 -->
+    <div class="unit-card grade-1" onclick="openModal('e1')">
+      <div class="unit-card-header">
+        <div class="unit-number">01</div>
+        <div class="grade-badge">⭐ Grade 1 &nbsp;<span class="zh">一年級</span></div>
+        <div class="unit-title">What Is an Egg?</div>
+        <div class="unit-title-zh">雞蛋是什麼？</div>
+        <div class="unit-desc">Touch, observe, and describe a real egg. Meet the parts: shell, white, yolk.<span class="zh">觸摸、觀察並描述一顆真實的雞蛋。認識蛋殼、蛋白、蛋黃。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>What's hiding inside an egg before it becomes a chick?</span><span class="zh">在變成小雞之前，蛋裡面藏著什麼？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Picture book: <em>An Egg Is Quiet</em></span><span class="zh">繪本閱讀：安靜的蛋</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Sensory explore 感官探索</span>
+          <span class="chip">Drawing 繪圖</span>
+          <span class="chip">Tasting 品嚐</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit E2 -->
+    <div class="unit-card grade-1" onclick="openModal('e2')">
+      <div class="unit-card-header">
+        <div class="unit-number">02</div>
+        <div class="grade-badge">⭐ Grade 1 &nbsp;<span class="zh">一年級</span></div>
+        <div class="unit-title">Eggs Are Amazing!</div>
+        <div class="unit-title-zh">雞蛋超神奇！</div>
+        <div class="unit-desc">Discover that eggs come in many colors, sizes, and from many different birds.<span class="zh">發現雞蛋有各種顏色、尺寸，而且來自各種不同的鳥。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>Do brown eggs and white eggs taste different? Why different colors?</span><span class="zh">褐殼蛋和白殼蛋味道不同嗎？為什麼顏色不一樣？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Non-fiction: <em>Eggs of the World</em> (picture cards)</span><span class="zh">圖卡閱讀：世界各地的蛋</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Color sort 顏色分類</span>
+          <span class="chip">Blind taste test 蒙眼品嚐</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit E3 -->
+    <div class="unit-card grade-2" onclick="openModal('e3')">
+      <div class="unit-card-header">
+        <div class="unit-number">03</div>
+        <div class="grade-badge">🌿 Grade 2 &nbsp;<span class="zh">二年級</span></div>
+        <div class="unit-title">From Hen to Table</div>
+        <div class="unit-title-zh">從母雞到餐桌</div>
+        <div class="unit-desc">Follow an egg's journey from the hen house in Fangyuan to your breakfast plate.<span class="zh">追蹤一顆蛋從芳苑雞舍到你早餐餐盤的旅程。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>How many people's hands does an egg pass through before we eat it?</span><span class="zh">一顆蛋在我們吃之前，經過了多少人的手？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Flow chart story: Egg's Big Journey</span><span class="zh">流程圖故事：雞蛋的大旅程</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Sequence map 流程圖</span>
+          <span class="chip">Role play 角色扮演</span>
+          <span class="chip">Farm visit 農場參觀</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit E4 -->
+    <div class="unit-card grade-2" onclick="openModal('e4')">
+      <div class="unit-card-header">
+        <div class="unit-number">04</div>
+        <div class="grade-badge">🌿 Grade 2 &nbsp;<span class="zh">二年級</span></div>
+        <div class="unit-title">Fangyuan: Taiwan's Egg Capital</div>
+        <div class="unit-title-zh">芳苑：台灣的雞蛋之鄉</div>
+        <div class="unit-desc">Discover why our hometown is the most important egg-producing place in all of Taiwan.<span class="zh">發現為什麼我們的家鄉是全台灣最重要的雞蛋產地。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>Why did so many egg farms choose to settle here in Fangyuan?</span><span class="zh">為什麼這麼多蛋雞場選擇在芳苑這裡落腳？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Map + simple statistics: Fangyuan egg data</span><span class="zh">地圖與簡單統計：芳苑雞蛋數據</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Map reading 地圖閱讀</span>
+          <span class="chip">Local interview 訪問長輩</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit E5 -->
+    <div class="unit-card grade-3" onclick="openModal('e5')">
+      <div class="unit-card-header">
+        <div class="unit-number">05</div>
+        <div class="grade-badge">🌊 Grade 3 &nbsp;<span class="zh">三年級</span></div>
+        <div class="unit-title">Inside an Egg: Amazing Science</div>
+        <div class="unit-title-zh">蛋的內部：神奇的科學</div>
+        <div class="unit-desc">Explore the biology of an egg: albumen, yolk, air cell, chalaza, and the eggshell.<span class="zh">探索雞蛋的生物學：蛋白、蛋黃、氣室、繫帶與蛋殼。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>Why does a boiled egg's yolk sometimes turn green?</span><span class="zh">為什麼水煮蛋的蛋黃有時候會變成綠色？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Labeled diagram + science magazine article</span><span class="zh">標籤解剖圖與科學雜誌文章</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Dissection 解剖觀察</span>
+          <span class="chip">Diagram labeling 圖解標注</span>
+          <span class="chip">Cooking science 烹飪科學</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit E6 -->
+    <div class="unit-card grade-3" onclick="openModal('e6')">
+      <div class="unit-card-header">
+        <div class="unit-number">06</div>
+        <div class="grade-badge">🌊 Grade 3 &nbsp;<span class="zh">三年級</span></div>
+        <div class="unit-title">Big Numbers: Counting Fangyuan's Eggs</div>
+        <div class="unit-title-zh">大數字：計算芳苑的雞蛋</div>
+        <div class="unit-desc">Use real data to visualize how many eggs Fangyuan produces every single day.<span class="zh">用真實數據來視覺化芳苑每天到底生產多少顆雞蛋。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>If you stacked all of Fangyuan's daily eggs, how tall would the tower be?</span><span class="zh">如果把芳苑一天的雞蛋疊起來，會有多高？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Agricultural statistics table + newspaper infographic</span><span class="zh">農業統計表與報紙資訊圖</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 3 lessons &nbsp;<span class="zh">3 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Math estimation 數學估算</span>
+          <span class="chip">Bar chart 長條圖</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit E7 -->
+    <div class="unit-card grade-4" onclick="openModal('e7')">
+      <div class="unit-card-header">
+        <div class="unit-number">07</div>
+        <div class="grade-badge">💜 Grade 4 &nbsp;<span class="zh">四年級</span></div>
+        <div class="unit-title">Read Your Egg: Traceability Codes</div>
+        <div class="unit-title-zh">讀懂你的蛋：溯源碼</div>
+        <div class="unit-desc">Decode the printed code on eggshells. Learn what A, B, C, D mean for hen welfare.<span class="zh">解碼蛋殼上的印刷碼。學習 A、B、C、D 對母雞福利的意義。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>Can you find out which farm your egg came from — just from the code?</span><span class="zh">只靠一個編碼，你能找出雞蛋來自哪個農場嗎？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>MOA egg traceability guide + label decoding sheet</span><span class="zh">農業部雞蛋溯源指南與標籤解讀學習單</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Code cracking 解碼</span>
+          <span class="chip">QR scan 掃碼查詢</span>
+          <span class="chip">Supermarket visit 超市參觀</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit E8 -->
+    <div class="unit-card grade-4" onclick="openModal('e8')">
+      <div class="unit-card-header">
+        <div class="unit-number">08</div>
+        <div class="grade-badge">💜 Grade 4 &nbsp;<span class="zh">四年級</span></div>
+        <div class="unit-title">How Do Hens Live? 4 Farming Systems</div>
+        <div class="unit-title-zh">母雞怎麼生活？四種飼養方式</div>
+        <div class="unit-desc">Compare cage, barn, free-range, and enriched-cage systems. Visit a local farm.<span class="zh">比較格子籠、開放式、放牧與豐富籠四種飼養方式。參觀在地農場。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>If you were a hen, which farm would you choose to live on?</span><span class="zh">如果你是一隻母雞，你會選擇住在哪種農場？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Comparison article + photo comparison set</span><span class="zh">比較文章與照片對比組</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 3 lessons &nbsp;<span class="zh">3 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">T-chart 比較表</span>
+          <span class="chip">Farm visit 農場參觀</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit E9 -->
+    <div class="unit-card grade-5" onclick="openModal('e9')">
+      <div class="unit-card-header">
+        <div class="unit-number">09</div>
+        <div class="grade-badge">❤️ Grade 5 &nbsp;<span class="zh">五年級</span></div>
+        <div class="unit-title">Animal Welfare: Do Hens Have Rights?</div>
+        <div class="unit-title-zh">動物福利：母雞有權利嗎？</div>
+        <div class="unit-desc">Explore the concept of animal welfare. Less than 4% of Taiwan's eggs are cage-free.<span class="zh">探索動物福利的概念。台灣不到 4% 的雞蛋是非籠飼的。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>Should we pay more for a cage-free egg if it means the hen lived better?</span><span class="zh">如果母雞生活更好，我們應該為非籠飼蛋多付錢嗎？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Animal welfare report + consumer survey data</span><span class="zh">動物福利報告與消費者調查數據</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Ethics debate 倫理辯論</span>
+          <span class="chip">Price analysis 價格分析</span>
+          <span class="chip">Survey design 問卷設計</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit E10 -->
+    <div class="unit-card grade-5" onclick="openModal('e10')">
+      <div class="unit-card-header">
+        <div class="unit-number">10</div>
+        <div class="grade-badge">❤️ Grade 5 &nbsp;<span class="zh">五年級</span></div>
+        <div class="unit-title">Eggs in World Culture &amp; Cooking</div>
+        <div class="unit-title-zh">世界各地的雞蛋文化與料理</div>
+        <div class="unit-desc">From Japanese tamagoyaki to French omelettes — eggs unite the world's kitchens.<span class="zh">從日本玉子燒到法式蛋捲——雞蛋連結了全世界的廚房。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>What can the egg dishes of different cultures tell us about each society?</span><span class="zh">不同文化的雞蛋料理能告訴我們什麼？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Bilingual recipe cards + cultural notes</span><span class="zh">雙語食譜卡與文化說明</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 3 lessons &nbsp;<span class="zh">3 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Cooking class 烹飪課</span>
+          <span class="chip">Cultural compare 文化比較</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit E11 -->
+    <div class="unit-card grade-6" onclick="openModal('e11')">
+      <div class="unit-card-header">
+        <div class="unit-number">11</div>
+        <div class="grade-badge">🌸 Grade 6 &nbsp;<span class="zh">六年級</span></div>
+        <div class="unit-title">Farms and the Environment: Hard Truths</div>
+        <div class="unit-title-zh">農場與環境：殘酷的真相</div>
+        <div class="unit-desc">Investigate the real environmental costs of large-scale egg farming: smell, waste, water.<span class="zh">調查大規模蛋雞養殖的真實環境代價：臭味、廢棄物、水源。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>If the egg farms left Fangyuan, would that be good or bad for our village?</span><span class="zh">如果蛋雞場離開芳苑，對我們村莊是好事還是壞事？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Resident complaint reports + environmental data</span><span class="zh">居民投訴報告與環境數據</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Community survey 社區調查</span>
+          <span class="chip">News analysis 新聞分析</span>
+          <span class="chip">Policy proposal 政策提案</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unit E12 -->
+    <div class="unit-card grade-6" onclick="openModal('e12')">
+      <div class="unit-card-header">
+        <div class="unit-number">12</div>
+        <div class="grade-badge">🌸 Grade 6 &nbsp;<span class="zh">六年級</span></div>
+        <div class="unit-title">The Future of Fangyuan's Egg Industry</div>
+        <div class="unit-title-zh">芳苑蛋雞產業的未來</div>
+        <div class="unit-desc">Design a sustainable vision for local egg farming that balances economy, welfare, and ecology.<span class="zh">為在地蛋雞業設計永續願景，平衡經濟、福利與生態。</span></div>
+      </div>
+      <div class="unit-card-body">
+        <div class="unit-details">
+          <div class="detail-row"><span class="detail-icon">🎯</span><div class="detail-text"><strong>Big Question</strong><span>Can Fangyuan's egg industry be profitable AND kind to animals AND good for nature?</span><span class="zh">芳苑的蛋雞業能同時有利潤、對動物友善、又對自然有益嗎？</span></div></div>
+          <div class="detail-row"><span class="detail-icon">📖</span><div class="detail-text"><strong>Reading Text</strong><span>Sustainable farm case studies from Taiwan and Europe</span><span class="zh">台灣與歐洲永續農場案例研究</span></div></div>
+          <div class="detail-row"><span class="detail-icon">🔢</span><div class="detail-text"><strong>Lessons</strong> 4 lessons &nbsp;<span class="zh">4 節</span></div></div>
+        </div>
+      </div>
+      <div class="unit-card-footer">
+        <div class="activity-chips">
+          <span class="chip">Future design 未來設計</span>
+          <span class="chip">Pitch presentation 簡報呈現</span>
+          <span class="chip">SDG audit SDG檢核</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /units-grid -->
+</div><!-- /panel-egg -->
+
+
+<!-- ══════════════════ MODALS ══════════════════ -->
+<!-- Wind Modals -->
+<div class="modal-overlay" id="modal-w1" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeAllModals()">✕</button>
+      <div class="grade-badge l1" style="display:inline-flex;margin-bottom:10px">⭐ Grade 1 &nbsp;<span style="font-size:10px">一年級</span></div>
+      <div style="font-size:22px;font-weight:800;margin-bottom:4px">Unit 1: The Sun Gives Us Life</div>
+      <div style="font-size:13px;color:#64748b">單元一：太陽給我們生命</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <h4>🎯 Learning Objectives <span class="zh">學習目標</span></h4>
+        <ul>
+          <li>Name at least 3 things the sun provides (light, heat, energy)<span class="zh">說出太陽至少提供 3 種東西（光、熱、能量）</span></li>
+          <li>Explain why plants and animals need sunlight<span class="zh">解釋動植物為什麼需要陽光</span></li>
+          <li>Record daily sunshine observations in a journal<span class="zh">在日誌中記錄每日陽光觀察</span></li>
+        </ul>
+      </div>
+      <div class="modal-section">
+        <h4>📚 Lesson Timeline <span class="zh">課程時程（4 節）</span></h4>
+        <div class="lesson-timeline">
+          <div class="lesson-item"><div class="lesson-num" style="background:#d97706">1</div><div class="lesson-content"><strong>Wonder: What does the sun do? &nbsp;<span style="font-size:10px;color:#94a3b8">提問：太陽做什麼？</span></strong><span>Brainstorm + picture book read-aloud <span class="zh">腦力激盪 + 繪本朗讀</span></span></div></div>
+          <div class="lesson-item"><div class="lesson-num" style="background:#d97706">2</div><div class="lesson-content"><strong>Explore: Shadow walk outdoors &nbsp;<span style="font-size:10px;color:#94a3b8">探索：戶外影子散步</span></strong><span>Measure shadows at different times of day <span class="zh">測量不同時間的影子長度</span></span></div></div>
+          <div class="lesson-item"><div class="lesson-num" style="background:#d97706">3</div><div class="lesson-content"><strong>Read: Sun infographic cards &nbsp;<span style="font-size:10px;color:#94a3b8">閱讀：太陽資訊圖卡</span></strong><span>Partner reading + vocabulary sorting <span class="zh">同伴閱讀 + 詞彙分類</span></span></div></div>
+          <div class="lesson-item"><div class="lesson-num" style="background:#d97706">4</div><div class="lesson-content"><strong>Create: "My Sun Journal" &nbsp;<span style="font-size:10px;color:#94a3b8">創作：我的太陽日誌</span></strong><span>Draw and write what you learned <span class="zh">畫圖並寫下你的學習</span></span></div></div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <h4>🔗 SDG Connection <span class="zh">SDG 連結</span></h4>
+        <ul><li>SDG 7 — Clean Energy: The sun is Earth's original clean energy source<span class="zh">SDG 7 潔淨能源：太陽是地球最原始的潔淨能源</span></li></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-w11" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeAllModals()">✕</button>
+      <div class="grade-badge l6" style="display:inline-flex;margin-bottom:10px">🌸 Grade 6 &nbsp;<span style="font-size:10px">六年級</span></div>
+      <div style="font-size:22px;font-weight:800;margin-bottom:4px">Unit 11: Energy Justice</div>
+      <div style="font-size:13px;color:#64748b">單元十一：能源正義——風機應該建在哪裡？</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <h4>🎯 Learning Objectives <span class="zh">學習目標</span></h4>
+        <ul>
+          <li>Explain the concept of energy justice<span class="zh">解釋能源正義的概念</span></li>
+          <li>Identify multiple stakeholder perspectives on wind turbine placement<span class="zh">辨識風機設置的多方利害關係人觀點</span></li>
+          <li>Write an evidence-based opinion editorial<span class="zh">撰寫有論據支持的意見文章</span></li>
+        </ul>
+      </div>
+      <div class="modal-section">
+        <h4>📚 Lesson Timeline <span class="zh">課程時程（4 節）</span></h4>
+        <div class="lesson-timeline">
+          <div class="lesson-item"><div class="lesson-num" style="background:#db2777">1</div><div class="lesson-content"><strong>The Facts: 50 turbines planned for Fangyuan<span style="font-size:10px;color:#94a3b8"> 事實：50 座風機計畫</span></strong><span>Read news + map the planned locations <span class="zh">閱讀新聞 + 標示規劃位置</span></span></div></div>
+          <div class="lesson-item"><div class="lesson-num" style="background:#db2777">2</div><div class="lesson-content"><strong>Stakeholder Interviews (role play)<span style="font-size:10px;color:#94a3b8"> 利害關係人訪談（角色扮演）</span></strong><span>Farmer, fisherman, developer, mayor, student <span class="zh">農民、漁民、開發商、鄉長、學生</span></span></div></div>
+          <div class="lesson-item"><div class="lesson-num" style="background:#db2777">3</div><div class="lesson-content"><strong>Town Hall Simulation<span style="font-size:10px;color:#94a3b8"> 公聽會模擬</span></strong><span>Present arguments, vote on proposal <span class="zh">陳述論點，對提案進行投票</span></span></div></div>
+          <div class="lesson-item"><div class="lesson-num" style="background:#db2777">4</div><div class="lesson-content"><strong>Editorial Writing<span style="font-size:10px;color:#94a3b8"> 社論寫作</span></strong><span>Write a letter to the county government <span class="zh">寫一封給縣政府的公開信</span></span></div></div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <h4>🔗 SDG Connection <span class="zh">SDG 連結</span></h4>
+        <ul>
+          <li>SDG 7 — Clean Energy vs. community impact<span class="zh">SDG 7 潔淨能源 vs. 社區影響</span></li>
+          <li>SDG 16 — Peace, Justice and Strong Institutions<span class="zh">SDG 16 和平正義與有效的制度</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Egg Modals -->
+<div class="modal-overlay" id="modal-e1" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeAllModals()">✕</button>
+      <div class="grade-badge l1" style="display:inline-flex;margin-bottom:10px">⭐ Grade 1 &nbsp;<span style="font-size:10px">一年級</span></div>
+      <div style="font-size:22px;font-weight:800;margin-bottom:4px">Unit 1: What Is an Egg?</div>
+      <div style="font-size:13px;color:#64748b">單元一：雞蛋是什麼？</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <h4>🎯 Learning Objectives <span class="zh">學習目標</span></h4>
+        <ul>
+          <li>Name the three main parts of an egg<span class="zh">說出雞蛋的三個主要部分</span></li>
+          <li>Use senses to describe the egg's exterior<span class="zh">用感官描述蛋殼的外觀</span></li>
+          <li>Explain that eggs are a food AND a life beginning<span class="zh">解釋雞蛋既是食物也是生命的起點</span></li>
+        </ul>
+      </div>
+      <div class="modal-section">
+        <h4>📚 Lesson Timeline <span class="zh">課程時程（4 節）</span></h4>
+        <div class="lesson-timeline">
+          <div class="lesson-item"><div class="lesson-num" style="background:#c2410c">1</div><div class="lesson-content"><strong>Sensory Explore: Touch &amp; Smell<span style="font-size:10px;color:#94a3b8"> 感官探索：觸摸與氣味</span></strong><span>Each student holds a real egg <span class="zh">每位學生拿著一顆真實的雞蛋</span></span></div></div>
+          <div class="lesson-item"><div class="lesson-num" style="background:#c2410c">2</div><div class="lesson-content"><strong>Read-aloud: An Egg Is Quiet<span style="font-size:10px;color:#94a3b8"> 朗讀繪本：安靜的蛋</span></strong><span>Stop and discuss at key moments <span class="zh">在關鍵時刻停下來討論</span></span></div></div>
+          <div class="lesson-item"><div class="lesson-num" style="background:#c2410c">3</div><div class="lesson-content"><strong>Crack &amp; Cook: Scrambled eggs!<span style="font-size:10px;color:#94a3b8"> 打蛋煮蛋：炒蛋！</span></strong><span>Observe the transformation from raw to cooked <span class="zh">觀察從生蛋到熟蛋的變化</span></span></div></div>
+          <div class="lesson-item"><div class="lesson-num" style="background:#c2410c">4</div><div class="lesson-content"><strong>Art: Draw My Egg<span style="font-size:10px;color:#94a3b8"> 藝術：畫我的蛋</span></strong><span>Label shell, white, yolk in English and Chinese <span class="zh">用中英文標示蛋殼、蛋白、蛋黃</span></span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-e12" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeAllModals()">✕</button>
+      <div class="grade-badge l6" style="display:inline-flex;margin-bottom:10px">🌸 Grade 6 &nbsp;<span style="font-size:10px">六年級</span></div>
+      <div style="font-size:22px;font-weight:800;margin-bottom:4px">Unit 12: The Future of Fangyuan's Egg Industry</div>
+      <div style="font-size:13px;color:#64748b">單元十二：芳苑蛋雞產業的未來</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <h4>🎯 Learning Objectives <span class="zh">學習目標</span></h4>
+        <ul>
+          <li>Evaluate current egg industry practices against SDG criteria<span class="zh">用 SDG 標準評估目前的蛋雞業做法</span></li>
+          <li>Design a sustainable egg farm concept<span class="zh">設計一個永續蛋雞農場概念</span></li>
+          <li>Present and defend their vision to an audience<span class="zh">向聽眾呈現並捍衛自己的願景</span></li>
+        </ul>
+      </div>
+      <div class="modal-section">
+        <h4>📚 Lesson Timeline <span class="zh">課程時程（4 節）</span></h4>
+        <div class="lesson-timeline">
+          <div class="lesson-item"><div class="lesson-num" style="background:#db2777">1</div><div class="lesson-content"><strong>SDG Audit of Current Fangyuan Farms<span style="font-size:10px;color:#94a3b8"> 現況農場 SDG 稽核</span></strong><span>Score current practices against each SDG <span class="zh">對照每個 SDG 為現況打分</span></span></div></div>
+          <div class="lesson-item"><div class="lesson-num" style="background:#db2777">2</div><div class="lesson-content"><strong>Case Studies: Sustainable Farms in Europe<span style="font-size:10px;color:#94a3b8"> 案例研究：歐洲永續農場</span></strong><span>Netherlands, Denmark — what can we learn? <span class="zh">荷蘭、丹麥——我們能學到什麼？</span></span></div></div>
+          <div class="lesson-item"><div class="lesson-num" style="background:#db2777">3</div><div class="lesson-content"><strong>Design Workshop: Farm of the Future<span style="font-size:10px;color:#94a3b8"> 設計工作坊：未來農場</span></strong><span>Sketch, plan, and calculate costs <span class="zh">繪圖、規劃並計算成本</span></span></div></div>
+          <div class="lesson-item"><div class="lesson-num" style="background:#db2777">4</div><div class="lesson-content"><strong>Final Pitch Presentation<span style="font-size:10px;color:#94a3b8"> 最終簡報呈現</span></strong><span>Present to parents, farmers, and community <span class="zh">向家長、農民與社區呈現</span></span></div></div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <h4>🔗 SDG Connection <span class="zh">SDG 連結</span></h4>
+        <ul>
+          <li>SDG 2 — Zero Hunger: food security &amp; nutrition<span class="zh">SDG 2 消除飢餓：糧食安全與營養</span></li>
+          <li>SDG 12 — Responsible Production and Consumption<span class="zh">SDG 12 責任生產與消費</span></li>
+          <li>SDG 15 — Life on Land: ecosystem protection<span class="zh">SDG 15 陸域生態：生態系統保護</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer>
+  <strong>Houliao Elementary School &nbsp;·&nbsp; 後寮國民小學</strong>
+  <span class="zh">彰化縣芳苑鄉後寮村芳寮路30號 &nbsp;·&nbsp; School-Based Curriculum Design 校訂課程設計</span>
+  <br/><br/>
+  <span style="font-size:11px;opacity:0.6">
+    Data sources: Taipower, Ørsted Taiwan, MOA Agricultural Statistics, UN SDGs, 上下游新聞, 報導者
+    <span class="zh" style="display:block;margin-top:3px">資料來源：台電、沃旭能源台灣、農業部農業統計、聯合國 SDGs、上下游新聞、報導者</span>
+  </span>
+</footer>
+
+<!-- ══════════════════ JS ══════════════════ -->
+<script>
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelector('.' + tab + '-tab').classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+    // Re-trigger card animations
+    document.querySelectorAll('#panel-' + tab + ' .unit-card').forEach((c, i) => {
+      c.style.animation = 'none';
+      c.offsetHeight; // reflow
+      c.style.animation = '';
+      c.style.animationDelay = (i * 0.04) + 's';
+    });
+  }
+
+  function openModal(id) {
+    const el = document.getElementById('modal-' + id);
+    if (el) { el.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  }
+  function closeModal(e) {
+    if (e.target.classList.contains('modal-overlay')) closeAllModals();
+  }
+  function closeAllModals() {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAllModals(); });
+</script>
+</body>
+</html>
