@@ -3,412 +3,773 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Animal Friends 動物朋友 | 萬興國小</title>
+<title>Animal Friends 🐾 | 萬興國小</title>
 <style>
 :root {
-  --dog:#E65100; --cat:#6A1B9A; --pig:#C2185B;
-  --cow:#2E7D32; --duck:#1565C0; --sheep:#F57F17;
-  --dark:#1A1A2E; --purple:#7B2FBE; --green:#27AE60;
-  --yellow:#FFD700; --white:#fff; --r:18px;
+  --dog:    #FF6B6B;
+  --cat:    #A855F7;
+  --pig:    #F472B6;
+  --cow:    #F59E0B;
+  --duck:   #34D399;
+  --sheep:  #60A5FA;
+  --dark:   #0f0f1a;
+  --card:   #1a1a2e;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;scroll-behavior:smooth}
-body{font-family:'Arial Rounded MT Bold','Arial',sans-serif;background:var(--dark);color:#fff;overflow-x:hidden;overflow-y:auto}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%; height: 100%;
+  background: var(--dark);
+  font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+  overflow: hidden;
+  user-select: none;
+}
 
-nav{background:#111;padding:10px 20px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;position:sticky;top:0;z-index:99;box-shadow:0 2px 12px #0008}
-nav a{color:#ccc;text-decoration:none;font-size:.85rem;padding:5px 12px;border-radius:20px;transition:.2s}
-nav a:hover{background:var(--purple);color:#fff}
+/* ── Slideshow shell ── */
+#slideshow {
+  width: 100%; height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+#track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.45s cubic-bezier(.4,0,.2,1);
+}
+.slide {
+  min-width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 24px 70px;
+  overflow-y: auto;
+}
 
-.hero{background:radial-gradient(ellipse at 50% 40%,#2D1B69,#1A1A2E 70%);padding:56px 20px 40px;text-align:center}
-.hero .animal-row{font-size:clamp(2rem,7vw,4rem);letter-spacing:8px;margin-bottom:12px}
-.hero h1{font-size:clamp(2.4rem,9vw,6rem);font-weight:900;color:var(--yellow);line-height:1;text-shadow:0 4px 24px #ffd70055}
-.hero h2{font-size:clamp(1.4rem,5vw,3rem);font-weight:800;color:#fff;margin-top:6px}
-.hero .zh{font-size:clamp(1.1rem,3vw,2rem);color:#C8A8FF;margin-top:8px}
-.hero .meta{font-size:.9rem;color:#9090CC;margin-top:10px}
+/* ── Nav arrows ── */
+.arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,.12);
+  border: none;
+  color: #fff;
+  font-size: 1.8rem;
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 100;
+  transition: background .2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.arrow:hover { background: rgba(255,255,255,.28); }
+#prev { left: 10px; }
+#next { right: 10px; }
+.arrow:disabled { opacity: .2; cursor: default; }
 
-.sec-head{background:var(--purple);padding:16px 24px;font-size:clamp(1.4rem,4vw,2.2rem);font-weight:900;text-align:center;letter-spacing:1px}
-.sec-head .zh-sub{font-size:60%;font-weight:400;color:#DDD;margin-left:10px}
+/* ── Dots ── */
+#dots {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 100;
+}
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.3);
+  cursor: pointer;
+  transition: all .2s;
+}
+.dot.active { background: #fff; transform: scale(1.3); }
 
-.animals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:32px 20px;max-width:1100px;margin:0 auto}
-.animal-card{border-radius:var(--r);overflow:hidden;box-shadow:0 6px 24px #0005;transition:transform .2s}
-.animal-card:hover{transform:translateY(-4px)}
-.card-top{padding:16px 20px 8px;display:flex;justify-content:space-between;align-items:center}
-.card-top .en{font-size:clamp(2rem,6vw,3rem);font-weight:900;color:#fff}
-.card-top .zh{font-size:clamp(1.1rem,3vw,1.8rem);font-weight:700;color:rgba(255,255,255,.8)}
-.card-body{padding:8px 20px 20px;display:flex;align-items:center;gap:16px}
-.card-emoji{font-size:clamp(4rem,12vw,7rem);line-height:1;flex-shrink:0;animation:bounce 3s ease-in-out infinite}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.card-right{flex:1;display:flex;flex-direction:column;gap:10px}
-.sound-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.45);border-radius:50px;padding:10px 20px;font-size:clamp(1.3rem,4vw,2rem);font-weight:900;cursor:pointer;transition:.15s;width:100%;justify-content:center;color:#fff;user-select:none;border:none}
-.sound-pill:hover{background:rgba(255,255,255,.3);transform:scale(1.04)}
-.sound-pill:active{transform:scale(.97)}
-.sentence-box{background:rgba(0,0,0,.25);border-radius:12px;padding:10px 14px}
-.sentence-box .label{font-size:.72rem;color:rgba(255,255,255,.6);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
-.sentence-box .sent{font-size:clamp(.95rem,2.5vw,1.25rem);font-weight:700;color:#fff;line-height:1.4}
-.sentence-box .sent em{font-style:normal;color:var(--yellow)}
+/* ── Slide counter ── */
+#counter {
+  position: fixed;
+  top: 14px; right: 18px;
+  color: rgba(255,255,255,.4);
+  font-size: .75rem;
+  z-index: 100;
+}
 
-.practice-inner{padding:28px 20px;max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
-.pattern-card{background:#16213E;border-radius:var(--r);padding:22px 24px;border-left:6px solid var(--purple)}
-.pattern-card .ptitle{font-size:clamp(1.1rem,3vw,1.5rem);font-weight:700;color:var(--yellow);margin-bottom:10px}
-.pattern-card .ptext{font-size:clamp(1.3rem,4vw,2rem);font-weight:900;color:#fff;line-height:1.5}
-.pattern-card .ptext em{font-style:normal;background:var(--purple);border-radius:6px;padding:0 6px}
-.pattern-card .pnote{font-size:.95rem;color:#9090BB;margin-top:8px}
-.pattern-card .example{margin-top:14px;display:flex;flex-direction:column;gap:8px}
-.ex-row{display:flex;align-items:baseline;gap:10px;font-size:clamp(1rem,2.5vw,1.3rem)}
-.ex-row .speaker{color:#888;font-size:.85em;white-space:nowrap}
-.ex-row .line{color:#fff;font-weight:700}
-.ex-row .line em{font-style:normal;color:#7DFDBD}
+/* ════════════════════════════
+   SLIDE 1 — HERO
+════════════════════════════ */
+.hero-emojis { font-size: 3rem; margin-bottom: 10px; letter-spacing: 6px; }
+.hero-title {
+  font-size: clamp(2.4rem, 8vw, 5rem);
+  color: #fff;
+  text-align: center;
+  line-height: 1.1;
+  text-shadow: 0 4px 24px #0008;
+}
+.hero-sub {
+  font-size: clamp(1.1rem, 3.5vw, 2rem);
+  color: rgba(255,255,255,.7);
+  margin-top: 8px;
+  text-align: center;
+}
+.hero-zh {
+  font-size: clamp(.85rem, 2.5vw, 1.2rem);
+  color: rgba(255,255,255,.45);
+  margin-top: 6px;
+}
+.hero-meta {
+  margin-top: 20px;
+  background: rgba(255,255,255,.08);
+  border-radius: 30px;
+  padding: 6px 22px;
+  font-size: .82rem;
+  color: rgba(255,255,255,.55);
+  text-align: center;
+}
 
-.game-inner{padding:28px 20px;max-width:900px;margin:0 auto}
-.quiz-block{background:#0F3460;border-radius:var(--r);padding:24px;margin-bottom:20px}
-.quiz-q{font-size:clamp(1.1rem,3vw,1.6rem);font-weight:700;color:#DDDDFF;margin-bottom:14px;text-align:center}
-.hear-btn{font-size:clamp(3rem,10vw,6rem);text-align:center;display:block;cursor:pointer;transition:transform .15s;background:none;border:none;width:100%;padding:8px 0}
-.hear-btn:hover{transform:scale(1.1)}
-.hear-btn:active{transform:scale(.94)}
-.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
-.qopt{border-radius:12px;padding:14px 16px;font-size:clamp(1.1rem,3vw,1.6rem);font-weight:700;color:#fff;cursor:pointer;display:flex;align-items:center;gap:10px;transition:.15s;border:none}
-.qopt:hover{filter:brightness(1.2);transform:scale(1.03)}
-.qopt:active{transform:scale(.97)}
-.badge{width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:900;flex-shrink:0}
-.feedback{text-align:center;font-size:clamp(1.1rem,3vw,1.5rem);font-weight:700;min-height:2.2em;padding-top:10px}
-.feedback.correct{color:#7DFDBD}
-.feedback.wrong{color:#F1948A}
+/* ════════════════════════════
+   SLIDE 2 — ANIMAL CARDS GRID
+════════════════════════════ */
+.slide-heading {
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
+  color: #fff;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.animals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 680px;
+}
+.animal-card {
+  border-radius: 16px;
+  padding: 14px 10px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: transform .15s;
+  position: relative;
+  overflow: hidden;
+}
+.animal-card:active { transform: scale(.95); }
+.animal-emoji { font-size: clamp(2rem, 6vw, 3.2rem); }
+.animal-name { font-size: clamp(.85rem, 2.5vw, 1.1rem); color: #fff; font-weight: 900; }
+.animal-zh { font-size: .72rem; color: rgba(255,255,255,.6); }
+.animal-sound-label {
+  font-size: clamp(.65rem, 1.8vw, .8rem);
+  color: rgba(255,255,255,.85);
+  background: rgba(0,0,0,.25);
+  border-radius: 12px;
+  padding: 2px 10px;
+  text-align: center;
+}
+.sound-btn {
+  background: rgba(255,255,255,.18);
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  padding: 5px 14px;
+  font-size: .8rem;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: bold;
+  transition: background .15s;
+  margin-top: 2px;
+}
+.sound-btn:hover { background: rgba(255,255,255,.32); }
 
-.tpr-inner{padding:28px 20px;max-width:1000px;margin:0 auto}
-.tpr-note{text-align:center;color:#BBAAEE;margin-bottom:20px;font-size:1.05rem}
-.tpr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-.tpr-card{background:#16213E;border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:.18s;border:2px solid transparent}
-.tpr-card:hover{border-color:var(--purple);transform:scale(1.04)}
-.tpr-card:active{transform:scale(.97)}
-.tc-emoji{font-size:clamp(3rem,8vw,5rem);margin-bottom:8px;display:block}
-.tc-cmd{font-size:clamp(1.1rem,3vw,1.6rem);font-weight:900;color:var(--yellow);margin-bottom:4px}
-.tc-reply{font-size:clamp(.9rem,2.5vw,1.1rem);color:#C8A8FF}
-.tc-zh{font-size:.85rem;color:#888;margin-top:4px}
+/* ════════════════════════════
+   SLIDE 3 & 4 — SENTENCE PATTERNS
+════════════════════════════ */
+.pattern-box {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 24px 28px;
+  max-width: 620px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+.pattern-label {
+  font-size: .75rem;
+  color: rgba(255,255,255,.4);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.pattern-text {
+  font-size: clamp(1.2rem, 4vw, 1.9rem);
+  color: #fff;
+  line-height: 1.4;
+}
+.pattern-blank {
+  display: inline-block;
+  border-bottom: 3px solid #A855F7;
+  min-width: 80px;
+  color: #A855F7;
+}
+.pattern-zh {
+  font-size: .85rem;
+  color: rgba(255,255,255,.45);
+  margin-top: 8px;
+}
+.example-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,.06);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.speaker-label { color: rgba(255,255,255,.5); font-size: .8rem; white-space: nowrap; }
+.example-text { color: #fff; font-size: clamp(.85rem, 2.5vw, 1rem); flex: 1; }
+.mini-sound-btn {
+  background: #A855F7;
+  border: none; border-radius: 16px;
+  color: #fff; padding: 3px 12px;
+  font-size: .78rem; cursor: pointer;
+  font-family: inherit; font-weight: bold;
+}
 
-.review-inner{padding:28px 20px;max-width:800px;margin:0 auto;overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:clamp(1rem,2.5vw,1.3rem)}
-th{background:var(--purple);padding:14px;text-align:center;font-weight:900;letter-spacing:1px}
-td{padding:14px 16px;text-align:center;border-bottom:1px solid #2a2a4a}
-tr:nth-child(even) td{background:#16213E}
-td.ac{font-size:clamp(1.5rem,4vw,2.5rem)}
-td.sc button{background:none;border:2px solid #555;border-radius:30px;color:var(--yellow);font-size:inherit;font-weight:900;padding:6px 14px;cursor:pointer;transition:.15s}
-td.sc button:hover{background:var(--purple);border-color:var(--purple);color:#fff}
+/* ════════════════════════════
+   SLIDES 5-7 — GAME TIME
+════════════════════════════ */
+.game-badge {
+  background: linear-gradient(135deg, #F59E0B, #EF4444);
+  color: #fff;
+  font-size: clamp(.9rem, 2.5vw, 1.1rem);
+  padding: 6px 22px;
+  border-radius: 30px;
+  margin-bottom: 14px;
+  font-weight: 900;
+}
+.quiz-card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 22px 22px 18px;
+  max-width: 580px;
+  width: 100%;
+}
+.quiz-q {
+  font-size: clamp(.95rem, 3vw, 1.25rem);
+  color: #fff;
+  text-align: center;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+.hear-btn {
+  background: linear-gradient(135deg, #6366F1, #A855F7);
+  border: none; border-radius: 50%;
+  width: 56px; height: 56px;
+  font-size: 1.6rem;
+  cursor: pointer;
+  display: block; margin: 0 auto 16px;
+  transition: transform .15s;
+  box-shadow: 0 4px 18px #A855F740;
+}
+.hear-btn:active { transform: scale(.9); }
+.opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.qopt {
+  border: none; border-radius: 14px;
+  color: #fff; padding: 12px 8px;
+  font-size: clamp(.85rem, 2.5vw, 1rem);
+  cursor: pointer;
+  font-family: inherit; font-weight: bold;
+  transition: opacity .15s, transform .1s;
+  display: flex; align-items: center; gap: 8px;
+}
+.qopt:hover { opacity: .88; }
+.qopt:active { transform: scale(.97); }
+.qopt.correct { outline: 3px solid #4ADE80; box-shadow: 0 0 18px #4ADE8055; }
+.qopt.wrong   { opacity: .4; }
+.badge {
+  background: rgba(0,0,0,.25);
+  border-radius: 8px;
+  padding: 1px 7px;
+  font-size: .78rem;
+}
+.q-feedback {
+  text-align: center;
+  margin-top: 12px;
+  font-size: clamp(.82rem, 2.2vw, .95rem);
+  min-height: 24px;
+  color: #4ADE80;
+  font-weight: bold;
+}
 
-footer{background:#111;padding:28px;text-align:center;color:#666;font-size:.9rem}
-footer strong{color:#999}
+/* ════════════════════════════
+   SLIDE 8 — TPR
+════════════════════════════ */
+.tpr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 640px;
+  width: 100%;
+}
+.tpr-card {
+  border-radius: 14px;
+  padding: 14px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform .15s;
+}
+.tpr-card:active { transform: scale(.95); }
+.tpr-emoji { font-size: 2rem; }
+.tpr-action {
+  font-size: clamp(.7rem, 2vw, .85rem);
+  color: #fff;
+  margin-top: 6px;
+  line-height: 1.3;
+}
+.tpr-zh { font-size: .68rem; color: rgba(255,255,255,.5); margin-top: 3px; }
+
+/* ════════════════════════════
+   SLIDE 9 — REVIEW TABLE
+════════════════════════════ */
+.review-table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 620px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.review-table th {
+  background: rgba(255,255,255,.1);
+  color: rgba(255,255,255,.6);
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 10px 14px;
+  text-align: left;
+}
+.review-table td {
+  padding: 10px 14px;
+  color: #fff;
+  font-size: clamp(.8rem, 2.2vw, .95rem);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.review-table tr:last-child td { border-bottom: none; }
+.review-table tr:nth-child(odd) td { background: rgba(255,255,255,.03); }
+.rev-btn {
+  background: rgba(255,255,255,.12);
+  border: none; border-radius: 14px;
+  color: #fff; padding: 4px 12px;
+  font-size: .8rem; cursor: pointer;
+  font-family: inherit; font-weight: bold;
+}
+.rev-btn:hover { background: rgba(255,255,255,.22); }
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .animals-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .tpr-grid { grid-template-columns: repeat(2, 1fr); }
+  .opts { grid-template-columns: 1fr 1fr; }
+  .slide { padding: 14px 14px 60px; }
+}
 </style>
 </head>
 <body>
 
-<nav>
-  <a href="javascript:void(0)" onclick="goTo('animals')">🐾 Animals</a>
-  <a href="javascript:void(0)" onclick="goTo('practice')">💬 Sentences</a>
-  <a href="javascript:void(0)" onclick="goTo('game')">🎮 Game Time</a>
-  <a href="javascript:void(0)" onclick="goTo('tpr')">🏃 TPR</a>
-  <a href="javascript:void(0)" onclick="goTo('review')">📋 Review</a>
-</nav>
+<div id="slideshow">
+  <div id="track">
 
-<div class="hero">
-  <div class="animal-row">🐶 &nbsp;🐱 &nbsp;🐷 &nbsp;🐮 &nbsp;🦆 &nbsp;🐑</div>
-  <h1>ANIMAL FRIENDS</h1>
-  <h2>and Their Sounds</h2>
-  <div class="zh">動物朋友和牠們的叫聲</div>
-  <div class="meta">萬興國小 &nbsp;·&nbsp; May 19, 2025 &nbsp;·&nbsp; Grade 1 &amp; 2 &nbsp;一、二年級</div>
-</div>
+    <!-- ══════════════════════════════
+         SLIDE 1 — HERO
+    ══════════════════════════════ -->
+    <div class="slide" style="background: linear-gradient(145deg, #1a0533 0%, #0f172a 60%, #0d1f3c 100%);">
+      <div class="hero-emojis">🐶 🐱 🐷 🐮 🦆 🐑</div>
+      <div class="hero-title">ANIMAL FRIENDS</div>
+      <div class="hero-sub">and Their Sounds</div>
+      <div class="hero-zh">動物朋友和牠們的叫聲</div>
+      <div class="hero-meta">萬興國小 &nbsp;·&nbsp; May 19, 2025 &nbsp;·&nbsp; Grade 1 &amp; 2 &nbsp;一、二年級</div>
+    </div>
 
-<!-- ANIMALS -->
-<section id="animals">
-  <div class="sec-head">🐾 Meet the Animals! <span class="zh-sub">認識動物</span></div>
-  <div class="animals-grid">
+    <!-- ══════════════════════════════
+         SLIDE 2 — ANIMALS GRID
+    ══════════════════════════════ -->
+    <div class="slide" style="background: linear-gradient(145deg, #0f1a2e, #1a0f2e);">
+      <div class="slide-heading">🐾 Meet the Animals! &nbsp;<span style="font-size:.7em;color:rgba(255,255,255,.45)">認識動物朋友</span></div>
+      <div class="animals-grid">
 
-    <div class="animal-card" style="background:linear-gradient(135deg,#BF360C,#E65100)">
-      <div class="card-top"><span class="en">DOG</span><span class="zh">狗</span></div>
-      <div class="card-body">
-        <div class="card-emoji">🐶</div>
-        <div class="card-right">
-          <button class="sound-pill" onclick="speak('Woof, woof!')">🔊&nbsp; Woof, woof!</button>
-          <div class="sentence-box">
-            <div class="label">Say it! 跟著說</div>
-            <div class="sent">"I am a <em>dog</em>. <em>Woof, woof!</em>"</div>
-          </div>
+        <div class="animal-card" style="background: linear-gradient(145deg, #c0392b, #e74c3c);">
+          <div class="animal-emoji">🐶</div>
+          <div class="animal-name">Dog</div>
+          <div class="animal-zh">狗</div>
+          <div class="animal-sound-label">Woof, woof!</div>
+          <button class="sound-btn" onclick="say('Woof, woof!')">🔊 Listen</button>
+        </div>
+
+        <div class="animal-card" style="background: linear-gradient(145deg, #6c2bd9, #9b59b6);">
+          <div class="animal-emoji">🐱</div>
+          <div class="animal-name">Cat</div>
+          <div class="animal-zh">貓</div>
+          <div class="animal-sound-label">Meow, meow!</div>
+          <button class="sound-btn" onclick="say('Meow, meow!')">🔊 Listen</button>
+        </div>
+
+        <div class="animal-card" style="background: linear-gradient(145deg, #b0256e, #e91e8c);">
+          <div class="animal-emoji">🐷</div>
+          <div class="animal-name">Pig</div>
+          <div class="animal-zh">豬</div>
+          <div class="animal-sound-label">Oink, oink!</div>
+          <button class="sound-btn" onclick="say('Oink, oink!')">🔊 Listen</button>
+        </div>
+
+        <div class="animal-card" style="background: linear-gradient(145deg, #b7600a, #f39c12);">
+          <div class="animal-emoji">🐮</div>
+          <div class="animal-name">Cow</div>
+          <div class="animal-zh">牛</div>
+          <div class="animal-sound-label">Moo, moo!</div>
+          <button class="sound-btn" onclick="say('Moo, moo!')">🔊 Listen</button>
+        </div>
+
+        <div class="animal-card" style="background: linear-gradient(145deg, #0e7a4a, #1abc9c);">
+          <div class="animal-emoji">🦆</div>
+          <div class="animal-name">Duck</div>
+          <div class="animal-zh">鴨子</div>
+          <div class="animal-sound-label">Quack, quack!</div>
+          <button class="sound-btn" onclick="say('Quack, quack!')">🔊 Listen</button>
+        </div>
+
+        <div class="animal-card" style="background: linear-gradient(145deg, #1a5db5, #3498db);">
+          <div class="animal-emoji">🐑</div>
+          <div class="animal-name">Sheep</div>
+          <div class="animal-zh">羊</div>
+          <div class="animal-sound-label">Baa, baa!</div>
+          <button class="sound-btn" onclick="say('Baa, baa!')">🔊 Listen</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SLIDE 3 — PATTERN 1
+    ══════════════════════════════ -->
+    <div class="slide" style="background: linear-gradient(145deg, #1a0533, #0f1a2e);">
+      <div class="slide-heading">💬 Sentence Pattern 1 &nbsp;<span style="font-size:.7em;color:rgba(255,255,255,.4)">句型一</span></div>
+      <div class="pattern-box">
+        <div class="pattern-label">Pattern</div>
+        <div class="pattern-text">
+          I am a <span class="pattern-blank">___</span>. <span style="color:#F59E0B">[sound]</span>!
+        </div>
+        <div class="pattern-zh">我是一隻＿＿＿。（動物叫聲）！</div>
+        <div class="example-row" style="margin-top:14px">
+          <span class="speaker-label">🐶 Dog:</span>
+          <span class="example-text">"I am a <b>dog</b>. Woof, woof!"</span>
+          <button class="mini-sound-btn" onclick="say('I am a dog. Woof, woof!')">🔊</button>
+        </div>
+        <div class="example-row">
+          <span class="speaker-label">🐱 Cat:</span>
+          <span class="example-text">"I am a <b>cat</b>. Meow, meow!"</span>
+          <button class="mini-sound-btn" onclick="say('I am a cat. Meow, meow!')">🔊</button>
+        </div>
+        <div class="example-row">
+          <span class="speaker-label">🦆 Duck:</span>
+          <span class="example-text">"I am a <b>duck</b>. Quack, quack!"</span>
+          <button class="mini-sound-btn" onclick="say('I am a duck. Quack, quack!')">🔊</button>
         </div>
       </div>
     </div>
 
-    <div class="animal-card" style="background:linear-gradient(135deg,#4A148C,#6A1B9A)">
-      <div class="card-top"><span class="en">CAT</span><span class="zh">貓</span></div>
-      <div class="card-body">
-        <div class="card-emoji">🐱</div>
-        <div class="card-right">
-          <button class="sound-pill" onclick="speak('Meow, meow!')">🔊&nbsp; Meow, meow!</button>
-          <div class="sentence-box">
-            <div class="label">Say it! 跟著說</div>
-            <div class="sent">"I am a <em>cat</em>. <em>Meow, meow!</em>"</div>
-          </div>
+    <!-- ══════════════════════════════
+         SLIDE 4 — PATTERN 2
+    ══════════════════════════════ -->
+    <div class="slide" style="background: linear-gradient(145deg, #0d1f3c, #1a0533);">
+      <div class="slide-heading">💬 Sentence Pattern 2 &nbsp;<span style="font-size:.7em;color:rgba(255,255,255,.4)">句型二</span></div>
+      <div class="pattern-box">
+        <div class="pattern-label">Pattern</div>
+        <div class="pattern-text" style="font-size:clamp(1rem,3vw,1.5rem)">
+          "What animal is this?" <br>
+          <span style="color:#34D399; font-size:.85em">"It's a <span class="pattern-blank" style="border-color:#34D399; color:#34D399">___</span>!"</span>
+        </div>
+        <div class="pattern-zh">「這是什麼動物？」&nbsp; 「牠是一隻＿＿＿！」</div>
+        <div class="example-row" style="margin-top:14px">
+          <span class="speaker-label">Teacher:</span>
+          <span class="example-text">"What animal is this?"</span>
+          <button class="mini-sound-btn" onclick="say('Woof, woof!')" style="background:#FF6B6B">🔊 Woof</button>
+        </div>
+        <div class="example-row">
+          <span class="speaker-label">Students:</span>
+          <span class="example-text">"It's a <b>dog</b>!"</span>
+          <button class="mini-sound-btn" onclick="say('Its a dog!')" style="background:#34D399">🔊</button>
+        </div>
+        <div class="example-row">
+          <span class="speaker-label">Teacher:</span>
+          <span class="example-text">"What animal is this?"</span>
+          <button class="mini-sound-btn" onclick="say('Quack, quack!')" style="background:#34D399">🔊 Quack</button>
+        </div>
+        <div class="example-row">
+          <span class="speaker-label">Students:</span>
+          <span class="example-text">"It's a <b>duck</b>!"</span>
+          <button class="mini-sound-btn" onclick="say('Its a duck!')" style="background:#34D399">🔊</button>
         </div>
       </div>
     </div>
 
-    <div class="animal-card" style="background:linear-gradient(135deg,#880E4F,#C2185B)">
-      <div class="card-top"><span class="en">PIG</span><span class="zh">豬</span></div>
-      <div class="card-body">
-        <div class="card-emoji">🐷</div>
-        <div class="card-right">
-          <button class="sound-pill" onclick="speak('Oink, oink!')">🔊&nbsp; Oink, oink!</button>
-          <div class="sentence-box">
-            <div class="label">Say it! 跟著說</div>
-            <div class="sent">"I am a <em>pig</em>. <em>Oink, oink!</em>"</div>
-          </div>
+    <!-- ══════════════════════════════
+         SLIDE 5 — GAME TIME 1
+    ══════════════════════════════ -->
+    <div class="slide" style="background: linear-gradient(145deg, #1a1000, #1a0a00);">
+      <div class="game-badge">🎮 Game Time! &nbsp;·&nbsp; Round 1</div>
+      <div class="quiz-card">
+        <div class="quiz-q">🔊 Click and listen — which animal is it?<br><span style="color:rgba(255,255,255,.5);font-size:.85em">點一下聽聲音，猜猜是哪個動物？</span></div>
+        <button class="hear-btn" onclick="say('Meow, meow!')">🔊</button>
+        <div class="opts">
+          <button class="qopt" style="background:#1565C0" onclick="qAnswer(this,'wrong','g1')"><span class="badge">A</span> 🐶 Dog</button>
+          <button class="qopt" style="background:#6A1B9A" onclick="qAnswer(this,'correct','g1')"><span class="badge">B</span> 🐱 Cat</button>
+          <button class="qopt" style="background:#2E7D32" onclick="qAnswer(this,'wrong','g1')"><span class="badge">C</span> 🐮 Cow</button>
+          <button class="qopt" style="background:#C2185B" onclick="qAnswer(this,'wrong','g1')"><span class="badge">D</span> 🐷 Pig</button>
+        </div>
+        <div class="q-feedback" id="g1-fb"></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SLIDE 6 — GAME TIME 2
+    ══════════════════════════════ -->
+    <div class="slide" style="background: linear-gradient(145deg, #001a10, #001a1a);">
+      <div class="game-badge">🎮 Game Time! &nbsp;·&nbsp; Round 2</div>
+      <div class="quiz-card">
+        <div class="quiz-q">🔊 Click and listen — which animal is it?<br><span style="color:rgba(255,255,255,.5);font-size:.85em">點一下聽聲音，猜猜是哪個動物？</span></div>
+        <button class="hear-btn" onclick="say('Quack, quack!')">🔊</button>
+        <div class="opts">
+          <button class="qopt" style="background:#F57F17" onclick="qAnswer(this,'wrong','g2')"><span class="badge">A</span> 🐑 Sheep</button>
+          <button class="qopt" style="background:#880E4F" onclick="qAnswer(this,'wrong','g2')"><span class="badge">B</span> 🐷 Pig</button>
+          <button class="qopt" style="background:#004D40" onclick="qAnswer(this,'correct','g2')"><span class="badge">C</span> 🦆 Duck</button>
+          <button class="qopt" style="background:#1A237E" onclick="qAnswer(this,'wrong','g2')"><span class="badge">D</span> 🐮 Cow</button>
+        </div>
+        <div class="q-feedback" id="g2-fb"></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SLIDE 7 — GAME TIME 3
+    ══════════════════════════════ -->
+    <div class="slide" style="background: linear-gradient(145deg, #1a001a, #0a001a);">
+      <div class="game-badge">🎮 Game Time! &nbsp;·&nbsp; Round 3</div>
+      <div class="quiz-card">
+        <div class="quiz-q">🔊 Click and listen — which animal is it?<br><span style="color:rgba(255,255,255,.5);font-size:.85em">點一下聽聲音，猜猜是哪個動物？</span></div>
+        <button class="hear-btn" onclick="say('Moo, moo!')">🔊</button>
+        <div class="opts">
+          <button class="qopt" style="background:#4A148C" onclick="qAnswer(this,'wrong','g3')"><span class="badge">A</span> 🐱 Cat</button>
+          <button class="qopt" style="background:#1B5E20" onclick="qAnswer(this,'wrong','g3')"><span class="badge">B</span> 🦆 Duck</button>
+          <button class="qopt" style="background:#0D47A1" onclick="qAnswer(this,'wrong','g3')"><span class="badge">C</span> 🐑 Sheep</button>
+          <button class="qopt" style="background:#E65100" onclick="qAnswer(this,'correct','g3')"><span class="badge">D</span> 🐮 Cow</button>
+        </div>
+        <div class="q-feedback" id="g3-fb"></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         SLIDE 8 — TPR
+    ══════════════════════════════ -->
+    <div class="slide" style="background: linear-gradient(145deg, #0a1a0a, #0d1a1a);">
+      <div class="slide-heading">🏃 TPR Activity &nbsp;<span style="font-size:.7em;color:rgba(255,255,255,.4)">動作模仿</span></div>
+      <div style="color:rgba(255,255,255,.45);font-size:.8rem;margin-bottom:14px;text-align:center">Click a card — listen and act it out! &nbsp;點卡片，邊聽邊做動作！</div>
+      <div class="tpr-grid">
+        <div class="tpr-card" style="background:linear-gradient(145deg,#c0392b,#e74c3c)" onclick="say('Walk like a dog! Woof woof!')">
+          <div class="tpr-emoji">🐶</div>
+          <div class="tpr-action">Walk like<br>a <b>dog!</b></div>
+          <div class="tpr-zh">像狗一樣走路</div>
+        </div>
+        <div class="tpr-card" style="background:linear-gradient(145deg,#6c2bd9,#9b59b6)" onclick="say('Stretch like a cat! Meow meow!')">
+          <div class="tpr-emoji">🐱</div>
+          <div class="tpr-action">Stretch like<br>a <b>cat!</b></div>
+          <div class="tpr-zh">像貓一樣伸懶腰</div>
+        </div>
+        <div class="tpr-card" style="background:linear-gradient(145deg,#b0256e,#e91e8c)" onclick="say('Wiggle like a pig! Oink oink!')">
+          <div class="tpr-emoji">🐷</div>
+          <div class="tpr-action">Wiggle like<br>a <b>pig!</b></div>
+          <div class="tpr-zh">像豬一樣扭來扭去</div>
+        </div>
+        <div class="tpr-card" style="background:linear-gradient(145deg,#b7600a,#f39c12)" onclick="say('Walk slow like a cow! Moo moo!')">
+          <div class="tpr-emoji">🐮</div>
+          <div class="tpr-action">Walk slow like<br>a <b>cow!</b></div>
+          <div class="tpr-zh">像牛一樣慢慢走</div>
+        </div>
+        <div class="tpr-card" style="background:linear-gradient(145deg,#0e7a4a,#1abc9c)" onclick="say('Flap like a duck! Quack quack!')">
+          <div class="tpr-emoji">🦆</div>
+          <div class="tpr-action">Flap like<br>a <b>duck!</b></div>
+          <div class="tpr-zh">像鴨子一樣拍翅膀</div>
+        </div>
+        <div class="tpr-card" style="background:linear-gradient(145deg,#1a5db5,#3498db)" onclick="say('Jump like a sheep! Baa baa!')">
+          <div class="tpr-emoji">🐑</div>
+          <div class="tpr-action">Jump like<br>a <b>sheep!</b></div>
+          <div class="tpr-zh">像羊一樣跳跳跳</div>
         </div>
       </div>
     </div>
 
-    <div class="animal-card" style="background:linear-gradient(135deg,#1B5E20,#2E7D32)">
-      <div class="card-top"><span class="en">COW</span><span class="zh">牛</span></div>
-      <div class="card-body">
-        <div class="card-emoji">🐮</div>
-        <div class="card-right">
-          <button class="sound-pill" onclick="speak('Moo, moo!')">🔊&nbsp; Moo, moo!</button>
-          <div class="sentence-box">
-            <div class="label">Say it! 跟著說</div>
-            <div class="sent">"I am a <em>cow</em>. <em>Moo, moo!</em>"</div>
-          </div>
-        </div>
-      </div>
+    <!-- ══════════════════════════════
+         SLIDE 9 — REVIEW
+    ══════════════════════════════ -->
+    <div class="slide" style="background: linear-gradient(145deg, #0f1a2e, #1a0f2e);">
+      <div class="slide-heading">📋 Let's Review! &nbsp;<span style="font-size:.7em;color:rgba(255,255,255,.4)">複習時間</span></div>
+      <table class="review-table">
+        <thead>
+          <tr>
+            <th>Animal 動物</th>
+            <th>Sound 叫聲</th>
+            <th>Sentence 句子</th>
+            <th>🔊</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🐶 Dog 狗</td>
+            <td style="color:#FF6B6B">Woof, woof!</td>
+            <td style="font-size:.82rem">I am a dog.</td>
+            <td><button class="rev-btn" onclick="say('I am a dog. Woof, woof!')">▶</button></td>
+          </tr>
+          <tr>
+            <td>🐱 Cat 貓</td>
+            <td style="color:#A855F7">Meow, meow!</td>
+            <td style="font-size:.82rem">I am a cat.</td>
+            <td><button class="rev-btn" onclick="say('I am a cat. Meow, meow!')">▶</button></td>
+          </tr>
+          <tr>
+            <td>🐷 Pig 豬</td>
+            <td style="color:#F472B6">Oink, oink!</td>
+            <td style="font-size:.82rem">I am a pig.</td>
+            <td><button class="rev-btn" onclick="say('I am a pig. Oink, oink!')">▶</button></td>
+          </tr>
+          <tr>
+            <td>🐮 Cow 牛</td>
+            <td style="color:#F59E0B">Moo, moo!</td>
+            <td style="font-size:.82rem">I am a cow.</td>
+            <td><button class="rev-btn" onclick="say('I am a cow. Moo, moo!')">▶</button></td>
+          </tr>
+          <tr>
+            <td>🦆 Duck 鴨子</td>
+            <td style="color:#34D399">Quack, quack!</td>
+            <td style="font-size:.82rem">I am a duck.</td>
+            <td><button class="rev-btn" onclick="say('I am a duck. Quack, quack!')">▶</button></td>
+          </tr>
+          <tr>
+            <td>🐑 Sheep 羊</td>
+            <td style="color:#60A5FA">Baa, baa!</td>
+            <td style="font-size:.82rem">I am a sheep.</td>
+            <td><button class="rev-btn" onclick="say('I am a sheep. Baa, baa!')">▶</button></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <div class="animal-card" style="background:linear-gradient(135deg,#0D47A1,#1565C0)">
-      <div class="card-top"><span class="en">DUCK</span><span class="zh">鴨子</span></div>
-      <div class="card-body">
-        <div class="card-emoji">🦆</div>
-        <div class="card-right">
-          <button class="sound-pill" onclick="speak('Quack, quack!')">🔊&nbsp; Quack, quack!</button>
-          <div class="sentence-box">
-            <div class="label">Say it! 跟著說</div>
-            <div class="sent">"I am a <em>duck</em>. <em>Quack, quack!</em>"</div>
-          </div>
-        </div>
-      </div>
-    </div>
+  </div><!-- /track -->
+</div><!-- /slideshow -->
 
-    <div class="animal-card" style="background:linear-gradient(135deg,#E65100,#F57F17)">
-      <div class="card-top"><span class="en">SHEEP</span><span class="zh">羊</span></div>
-      <div class="card-body">
-        <div class="card-emoji">🐑</div>
-        <div class="card-right">
-          <button class="sound-pill" onclick="speak('Baa, baa!')">🔊&nbsp; Baa, baa!</button>
-          <div class="sentence-box">
-            <div class="label">Say it! 跟著說</div>
-            <div class="sent">"I am a <em>sheep</em>. <em>Baa, baa!</em>"</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- SENTENCE PRACTICE -->
-<section id="practice">
-  <div class="sec-head">💬 Let's Practice! <span class="zh-sub">句型練習</span></div>
-  <div class="practice-inner">
-
-    <div class="pattern-card">
-      <div class="ptitle">Pattern 1 — 句型一</div>
-      <div class="ptext">"I am a <em>___</em>. <em>[sound]</em>!"</div>
-      <div class="pnote">學生一邊模仿動作，一邊說出句子！</div>
-      <div class="example">
-        <div class="ex-row"><span class="speaker">Student：</span><span class="line">"I am a <em>dog</em>. <em>Woof, woof!</em>" 🐶</span></div>
-        <div class="ex-row"><span class="speaker">Student：</span><span class="line">"I am a <em>cat</em>. <em>Meow, meow!</em>" 🐱</span></div>
-        <div class="ex-row"><span class="speaker">Student：</span><span class="line">"I am a <em>pig</em>. <em>Oink, oink!</em>" 🐷</span></div>
-        <div class="ex-row"><span class="speaker">Student：</span><span class="line">"I am a <em>cow</em>. <em>Moo, moo!</em>" 🐮</span></div>
-        <div class="ex-row"><span class="speaker">Student：</span><span class="line">"I am a <em>duck</em>. <em>Quack, quack!</em>" 🦆</span></div>
-        <div class="ex-row"><span class="speaker">Student：</span><span class="line">"I am a <em>sheep</em>. <em>Baa, baa!</em>" 🐑</span></div>
-      </div>
-    </div>
-
-    <div class="pattern-card" style="border-left-color:var(--green)">
-      <div class="ptitle" style="color:#7DFDBD">Pattern 2 — 句型二</div>
-      <div class="ptext">"What animal is this?" → "It's a <em>___</em>!"</div>
-      <div class="pnote">外師播放叫聲問，學生搶答！</div>
-      <div class="example">
-        <div class="ex-row"><span class="speaker">Teacher：</span><span class="line">"What animal is this?" &nbsp;<button style="background:var(--purple);border:none;border-radius:20px;color:#fff;padding:3px 12px;cursor:pointer;font-size:.9em" onclick="speak('Woof, woof!')">🔊 Woof, woof!</button></span></div>
-        <div class="ex-row"><span class="speaker">Students：</span><span class="line">"It's a <em>dog</em>!" 🐶</span></div>
-        <div class="ex-row" style="margin-top:6px"><span class="speaker">Teacher：</span><span class="line">"What animal is this?" &nbsp;<button style="background:var(--purple);border:none;border-radius:20px;color:#fff;padding:3px 12px;cursor:pointer;font-size:.9em" onclick="speak('Quack, quack!')">🔊 Quack, quack!</button></span></div>
-        <div class="ex-row"><span class="speaker">Students：</span><span class="line">"It's a <em>duck</em>!" 🦆</span></div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- GAME TIME -->
-<section id="game">
-  <div class="sec-head">🎮 Game Time! <span class="zh-sub">遊戲時間 — 聽聲音猜動物</span></div>
-  <div class="game-inner">
-
-    <div class="quiz-block" id="q1">
-      <div class="quiz-q">👂 Click the speaker — which animal says this?<br><small style="color:#9090BB;font-weight:400">點喇叭聽聲音，猜猜是哪種動物！</small></div>
-      <button class="hear-btn" onclick="speak('Meow, meow!')">🔊</button>
-      <div class="quiz-opts">
-        <button class="qopt" style="background:#1565C0" onclick="answer(this,'wrong','q1')"><span class="badge">A</span>🐶 Dog</button>
-        <button class="qopt" style="background:#6A1B9A" onclick="answer(this,'correct','q1')"><span class="badge">B</span>🐱 Cat</button>
-        <button class="qopt" style="background:#2E7D32" onclick="answer(this,'wrong','q1')"><span class="badge">C</span>🐮 Cow</button>
-        <button class="qopt" style="background:#C2185B" onclick="answer(this,'wrong','q1')"><span class="badge">D</span>🐷 Pig</button>
-      </div>
-      <div class="feedback" id="q1-fb"></div>
-    </div>
-
-    <div class="quiz-block" id="q2">
-      <div class="quiz-q">👂 Click the speaker — which animal says this?<br><small style="color:#9090BB;font-weight:400">點喇叭聽聲音，猜猜是哪種動物！</small></div>
-      <button class="hear-btn" onclick="speak('Quack, quack!')">🔊</button>
-      <div class="quiz-opts">
-        <button class="qopt" style="background:#F57F17" onclick="answer(this,'wrong','q2')"><span class="badge">A</span>🐑 Sheep</button>
-        <button class="qopt" style="background:#2E7D32" onclick="answer(this,'wrong','q2')"><span class="badge">B</span>🐮 Cow</button>
-        <button class="qopt" style="background:#1565C0" onclick="answer(this,'correct','q2')"><span class="badge">C</span>🦆 Duck</button>
-        <button class="qopt" style="background:#6A1B9A" onclick="answer(this,'wrong','q2')"><span class="badge">D</span>🐱 Cat</button>
-      </div>
-      <div class="feedback" id="q2-fb"></div>
-    </div>
-
-    <div class="quiz-block" id="q3">
-      <div class="quiz-q">👂 Click the speaker — which animal says this?<br><small style="color:#9090BB;font-weight:400">點喇叭聽聲音，猜猜是哪種動物！</small></div>
-      <button class="hear-btn" onclick="speak('Baa, baa!')">🔊</button>
-      <div class="quiz-opts">
-        <button class="qopt" style="background:#C2185B" onclick="answer(this,'wrong','q3')"><span class="badge">A</span>🐷 Pig</button>
-        <button class="qopt" style="background:#1565C0" onclick="answer(this,'wrong','q3')"><span class="badge">B</span>🦆 Duck</button>
-        <button class="qopt" style="background:#E65100" onclick="answer(this,'wrong','q3')"><span class="badge">C</span>🐶 Dog</button>
-        <button class="qopt" style="background:#F57F17" onclick="answer(this,'correct','q3')"><span class="badge">D</span>🐑 Sheep</button>
-      </div>
-      <div class="feedback" id="q3-fb"></div>
-    </div>
-
-  </div>
-</section>
-
-<!-- TPR ACTIVITY -->
-<section id="tpr">
-  <div class="sec-head">🏃 TPR Activity! <span class="zh-sub">肢體動作練習</span></div>
-  <div class="tpr-inner">
-    <p class="tpr-note">Teacher says the command → Students act AND shout! 老師說指令，學生邊動邊大喊！<br>
-    <small style="color:#888">點卡片聽指令！</small></p>
-    <div class="tpr-grid">
-      <div class="tpr-card" onclick="speak('Walk like a dog! Woof, woof!')">
-        <span class="tc-emoji">🐶</span>
-        <div class="tc-cmd">"Walk like a dog!"</div>
-        <div class="tc-reply">Students: "Dog! Woof, woof!" 🐾</div>
-        <div class="tc-zh">像狗一樣走路！</div>
-      </div>
-      <div class="tpr-card" onclick="speak('Stretch like a cat! Meow, meow!')">
-        <span class="tc-emoji">🐱</span>
-        <div class="tc-cmd">"Stretch like a cat!"</div>
-        <div class="tc-reply">Students: "Cat! Meow, meow!" 🐾</div>
-        <div class="tc-zh">像貓一樣伸懶腰！</div>
-      </div>
-      <div class="tpr-card" onclick="speak('Wiggle like a pig! Oink, oink!')">
-        <span class="tc-emoji">🐷</span>
-        <div class="tc-cmd">"Wiggle like a pig!"</div>
-        <div class="tc-reply">Students: "Pig! Oink, oink!" 🐾</div>
-        <div class="tc-zh">像豬一樣扭動！</div>
-      </div>
-      <div class="tpr-card" onclick="speak('Walk slow like a cow! Moo, moo!')">
-        <span class="tc-emoji">🐮</span>
-        <div class="tc-cmd">"Walk slow like a cow!"</div>
-        <div class="tc-reply">Students: "Cow! Moo, moo!" 🐾</div>
-        <div class="tc-zh">像牛一樣慢慢走！</div>
-      </div>
-      <div class="tpr-card" onclick="speak('Flap like a duck! Quack, quack!')">
-        <span class="tc-emoji">🦆</span>
-        <div class="tc-cmd">"Flap like a duck!"</div>
-        <div class="tc-reply">Students: "Duck! Quack, quack!" 🐾</div>
-        <div class="tc-zh">像鴨子一樣拍翅膀！</div>
-      </div>
-      <div class="tpr-card" onclick="speak('Jump like a sheep! Baa, baa!')">
-        <span class="tc-emoji">🐑</span>
-        <div class="tc-cmd">"Jump like a sheep!"</div>
-        <div class="tc-reply">Students: "Sheep! Baa, baa!" 🐾</div>
-        <div class="tc-zh">像羊一樣跳！</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- REVIEW TABLE -->
-<section id="review">
-  <div class="sec-head">📋 Let's Review! <span class="zh-sub">複習時間</span></div>
-  <div class="review-inner">
-    <table>
-      <thead>
-        <tr><th>Animal 動物</th><th>English 英文</th><th>中文</th><th>Sound 叫聲</th></tr>
-      </thead>
-      <tbody>
-        <tr><td class="ac">🐶</td><td><strong>Dog</strong></td><td>狗</td><td class="sc"><button onclick="speak('Woof, woof!')">🔊 Woof, woof!</button></td></tr>
-        <tr><td class="ac">🐱</td><td><strong>Cat</strong></td><td>貓</td><td class="sc"><button onclick="speak('Meow, meow!')">🔊 Meow, meow!</button></td></tr>
-        <tr><td class="ac">🐷</td><td><strong>Pig</strong></td><td>豬</td><td class="sc"><button onclick="speak('Oink, oink!')">🔊 Oink, oink!</button></td></tr>
-        <tr><td class="ac">🐮</td><td><strong>Cow</strong></td><td>牛</td><td class="sc"><button onclick="speak('Moo, moo!')">🔊 Moo, moo!</button></td></tr>
-        <tr><td class="ac">🦆</td><td><strong>Duck</strong></td><td>鴨子</td><td class="sc"><button onclick="speak('Quack, quack!')">🔊 Quack, quack!</button></td></tr>
-        <tr><td class="ac">🐑</td><td><strong>Sheep</strong></td><td>羊</td><td class="sc"><button onclick="speak('Baa, baa!')">🔊 Baa, baa!</button></td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<footer>
-  <strong>Animal Friends 動物朋友</strong><br>
-  萬興國小 &nbsp;·&nbsp; May 19, 2025 &nbsp;·&nbsp; Teacher Dom &nbsp;·&nbsp; Grade 1 &amp; 2
-</footer>
+<!-- ── Navigation UI ── -->
+<button class="arrow" id="prev" onclick="move(-1)">&#8249;</button>
+<button class="arrow" id="next" onclick="move(1)">&#8250;</button>
+<div id="dots"></div>
+<div id="counter"></div>
 
 <script>
-function speak(text) {
+/* ── Speech ── */
+function say(text) {
   if (!window.speechSynthesis) return;
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'en-US'; u.rate = 0.82; u.pitch = 1.15; u.volume = 1;
+  u.lang = 'en-US'; u.rate = 0.82; u.pitch = 1.1; u.volume = 1;
   const voices = speechSynthesis.getVoices();
-  const v = voices.find(v => v.lang==='en-US' && v.name.includes('Samantha'))
-         || voices.find(v => v.lang==='en-US')
+  const v = voices.find(v => v.lang === 'en-US' && v.name.includes('Samantha'))
+         || voices.find(v => v.lang === 'en-US')
          || voices.find(v => v.lang.startsWith('en'));
   if (v) u.voice = v;
   speechSynthesis.speak(u);
 }
-if (window.speechSynthesis) {
-  speechSynthesis.getVoices();
-  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+window.speechSynthesis && speechSynthesis.addEventListener('voiceschanged', () => {});
+
+/* ── Slideshow ── */
+const track    = document.getElementById('track');
+const slides   = document.querySelectorAll('.slide');
+const dotsEl   = document.getElementById('dots');
+const prevBtn  = document.getElementById('prev');
+const nextBtn  = document.getElementById('next');
+const countEl  = document.getElementById('counter');
+const total    = slides.length;
+let cur = 0;
+
+// Build dots
+slides.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => goSlide(i);
+  dotsEl.appendChild(d);
+});
+
+function goSlide(n) {
+  cur = Math.max(0, Math.min(total - 1, n));
+  track.style.transform = `translateX(-${cur * 100}%)`;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === cur));
+  prevBtn.disabled = cur === 0;
+  nextBtn.disabled = cur === total - 1;
+  countEl.textContent = `${cur + 1} / ${total}`;
 }
 
-function answer(btn, result, qId) {
-  document.getElementById(qId).querySelectorAll('.qopt').forEach(b => b.style.pointerEvents='none');
-  const fb = document.getElementById(qId+'-fb');
-  if (result==='correct') {
-    btn.style.outline='4px solid #7DFDBD'; btn.style.transform='scale(1.07)';
-    fb.textContent='🎉 Correct! Great job! 答對了！'; fb.className='feedback correct';
-    playCheer();
+function move(dir) { goSlide(cur + dir); }
+
+// Touch/swipe support
+let tx = 0;
+track.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+track.addEventListener('touchend',   e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 40) move(dx < 0 ? 1 : -1);
+}, { passive: true });
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') move(1);
+  if (e.key === 'ArrowLeft')  move(-1);
+});
+
+// Init
+goSlide(0);
+
+/* ── Quiz logic ── */
+function qAnswer(btn, result, gid) {
+  const card = btn.closest('.quiz-card');
+  const opts = card.querySelectorAll('.qopt');
+  const fb   = document.getElementById(gid + '-fb');
+  opts.forEach(o => o.disabled = true);
+  if (result === 'correct') {
+    btn.classList.add('correct');
+    fb.textContent = '🎉 Correct! 答對了！Great job!';
+    cheer();
   } else {
-    btn.style.opacity='.4';
-    fb.textContent='❌ Try again next time! 再試一次！'; fb.className='feedback wrong';
+    btn.classList.add('wrong');
+    // highlight correct
+    opts.forEach(o => { if (o.getAttribute('onclick').includes("'correct'")) o.classList.add('correct'); });
+    fb.style.color = '#FB923C';
+    fb.textContent = '❌ Try again next time! 再加油！';
   }
 }
 
-function playCheer() {
+function cheer() {
   try {
-    const c = new (window.AudioContext||window.webkitAudioContext)();
-    [523,659,784,1047].forEach((f,i)=>{
-      const o=c.createOscillator(),g=c.createGain();
-      o.type='sine'; o.frequency.value=f;
-      g.gain.setValueAtTime(0,c.currentTime+i*.12);
-      g.gain.linearRampToValueAtTime(.28,c.currentTime+i*.12+.04);
-      g.gain.linearRampToValueAtTime(0,c.currentTime+i*.12+.2);
-      o.connect(g); g.connect(c.destination);
-      o.start(c.currentTime+i*.12); o.stop(c.currentTime+i*.12+.25);
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [523, 659, 784, 1047].forEach((f, i) => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = f;
+      o.type = 'sine';
+      g.gain.setValueAtTime(0.18, ctx.currentTime + i * 0.1);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.1 + 0.25);
+      o.start(ctx.currentTime + i * 0.1);
+      o.stop(ctx.currentTime + i * 0.1 + 0.3);
     });
-  } catch(e){}
-}
-</script>
-<script>
-// Works inside Google Sites iframe — uses scrollIntoView instead of anchor hash
-function goTo(id) {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch(e) {}
 }
 </script>
 </body>
