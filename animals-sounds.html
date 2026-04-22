@@ -12,7 +12,8 @@
   --yellow:#FFD700; --white:#fff; --r:18px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Arial Rounded MT Bold','Arial',sans-serif;background:var(--dark);color:#fff;overflow-x:hidden}
+html,body{height:100%;scroll-behavior:smooth}
+body{font-family:'Arial Rounded MT Bold','Arial',sans-serif;background:var(--dark);color:#fff;overflow-x:hidden;overflow-y:auto}
 
 nav{background:#111;padding:10px 20px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;position:sticky;top:0;z-index:99;box-shadow:0 2px 12px #0008}
 nav a{color:#ccc;text-decoration:none;font-size:.85rem;padding:5px 12px;border-radius:20px;transition:.2s}
@@ -100,11 +101,11 @@ footer strong{color:#999}
 <body>
 
 <nav>
-  <a href="#animals">🐾 Animals</a>
-  <a href="#practice">💬 Sentences</a>
-  <a href="#game">🎮 Game Time</a>
-  <a href="#tpr">🏃 TPR</a>
-  <a href="#review">📋 Review</a>
+  <a href="javascript:void(0)" onclick="scrollTo('animals')">🐾 Animals</a>
+  <a href="javascript:void(0)" onclick="scrollTo('practice')">💬 Sentences</a>
+  <a href="javascript:void(0)" onclick="scrollTo('game')">🎮 Game Time</a>
+  <a href="javascript:void(0)" onclick="scrollTo('tpr')">🏃 TPR</a>
+  <a href="javascript:void(0)" onclick="scrollTo('review')">📋 Review</a>
 </nav>
 
 <div class="hero">
@@ -401,6 +402,13 @@ function playCheer() {
       o.start(c.currentTime+i*.12); o.stop(c.currentTime+i*.12+.25);
     });
   } catch(e){}
+}
+</script>
+<script>
+// Works inside Google Sites iframe — uses scrollIntoView instead of anchor hash
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 </script>
 </body>
