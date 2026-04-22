@@ -101,11 +101,11 @@ footer strong{color:#999}
 <body>
 
 <nav>
-  <a href="javascript:void(0)" onclick="scrollTo('animals')">🐾 Animals</a>
-  <a href="javascript:void(0)" onclick="scrollTo('practice')">💬 Sentences</a>
-  <a href="javascript:void(0)" onclick="scrollTo('game')">🎮 Game Time</a>
-  <a href="javascript:void(0)" onclick="scrollTo('tpr')">🏃 TPR</a>
-  <a href="javascript:void(0)" onclick="scrollTo('review')">📋 Review</a>
+  <a href="javascript:void(0)" onclick="goTo('animals')">🐾 Animals</a>
+  <a href="javascript:void(0)" onclick="goTo('practice')">💬 Sentences</a>
+  <a href="javascript:void(0)" onclick="goTo('game')">🎮 Game Time</a>
+  <a href="javascript:void(0)" onclick="goTo('tpr')">🏃 TPR</a>
+  <a href="javascript:void(0)" onclick="goTo('review')">📋 Review</a>
 </nav>
 
 <div class="hero">
@@ -406,7 +406,7 @@ function playCheer() {
 </script>
 <script>
 // Works inside Google Sites iframe — uses scrollIntoView instead of anchor hash
-function scrollTo(id) {
+function goTo(id) {
   const el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
