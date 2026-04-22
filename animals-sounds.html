@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animals and Their Sounds 動物和牠們的叫聲</title>
+<style>
+  :root {
+    --yellow: #FFD700; --orange: #FF6B35; --purple: #7B2FBE;
+    --dark: #1A1A2E; --darkblue: #0F3460; --green: #27AE60;
+    --red: #C0392B; --white: #FFFFFF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Arial', sans-serif; background: var(--dark); overflow: hidden; height: 100vh; width: 100vw; }
+
+  /* ── Slide Container ── */
+  #deck { width: 100vw; height: 100vh; position: relative; }
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+  }
+  .slide.active { opacity: 1; pointer-events: all; }
+
+  /* ── Nav Arrows ── */
+  .nav-btn {
+    position: fixed; top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3);
+    color: white; font-size: 2rem; width: 52px; height: 52px;
+    border-radius: 50%; cursor: pointer; z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s; backdrop-filter: blur(4px);
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.3); }
+  #prev { left: 12px; } #next { right: 12px; }
+
+  /* ── Slide counter ── */
+  #counter {
+    position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+    color: rgba(255,255,255,0.5); font-size: 0.85rem; z-index: 100; letter-spacing: 1px;
+  }
+
+  /* ════════════════════════════════════════
+     TITLE SLIDE
+  ════════════════════════════════════════ */
+  #s-title { background: radial-gradient(ellipse at center, #2D1B69 0%, #1A1A2E 70%); }
+  #s-title .stars { font-size: 2.2rem; letter-spacing: 8px; margin-bottom: 8px; }
+  #s-title h1 { font-size: clamp(3.5rem,10vw,7rem); font-weight: 900; color: var(--yellow); line-height: 1; text-shadow: 0 4px 20px rgba(255,215,0,0.4); }
+  #s-title h2 { font-size: clamp(1.8rem,5vw,3rem); font-weight: 800; color: white; margin-top: 6px; }
+  #s-title .zh { font-size: clamp(1.2rem,3vw,2rem); color: #C8A8FF; margin-top: 10px; }
+  #s-title .meta { font-size: clamp(0.8rem,2vw,1rem); color: #9090CC; margin-top: 14px; }
+  #s-title .tagline { font-size: clamp(1rem,2.5vw,1.5rem); font-weight: 700; color: #A8E6CF; margin-top: 18px; }
+
+  /* ════════════════════════════════════════
+     ANIMAL SLIDES
+  ════════════════════════════════════════ */
+  .animal-slide { padding: 0; overflow: hidden; }
+  .animal-slide .top-bar {
+    position: absolute; top: 0; left: 0; right: 0; height: 14vh;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 3vw;
+  }
+  .animal-slide .en-name {
+    font-size: clamp(2.5rem,8vw,6rem); font-weight: 900;
+    color: white; font-family: 'Arial Black', sans-serif; line-height: 1;
+  }
+  .animal-slide .zh-name {
+    font-size: clamp(1.4rem,4vw,3rem); font-weight: 700;
+    color: rgba(255,255,255,0.85);
+  }
+  .animal-slide .body {
+    position: absolute; top: 14vh; left: 0; right: 0; bottom: 0;
+    display: flex; align-items: center; padding: 2vw 3vw;
+    gap: 3vw;
+  }
+  .animal-slide .emoji-box {
+    flex: 0 0 42%; display: flex; align-items: center; justify-content: center;
+    font-size: clamp(6rem,18vw,14rem); line-height: 1;
+    filter: drop-shadow(0 8px 24px rgba(0,0,0,0.25));
+    animation: bounce 3s ease-in-out infinite;
+  }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+  .animal-slide .sound-box {
+    flex: 1; background: white; border-radius: 24px;
+    padding: 3vh 2vw; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 1vh;
+    min-height: 50vh;
+  }
+  .sound-box .label { font-size: clamp(0.85rem,2vw,1.1rem); color: #888; font-style: italic; }
+  .sound-box .sound-word {
+    font-size: clamp(3rem,9vw,7rem); font-weight: 900;
+    font-family: 'Arial Black', sans-serif; line-height: 1;
+    text-shadow: 2px 4px 0 rgba(0,0,0,0.08);
+  }
+  .sound-box .zh-sound { font-size: clamp(1.5rem,4vw,3rem); font-weight: 700; }
+  .sound-box .play-btn {
+    margin-top: 1vh; background: none; border: 3px solid currentColor;
+    border-radius: 50px; padding: 10px 28px; font-size: clamp(1.2rem,3vw,2rem);
+    cursor: pointer; transition: all 0.2s; font-weight: 700;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sound-box .play-btn:hover { transform: scale(1.08); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+  .sound-box .play-btn:active { transform: scale(0.96); }
+
+  /* ════════════════════════════════════════
+     GAME TIME SLIDES (100% English)
+  ════════════════════════════════════════ */
+  .game-slide { background: #1A1A2E; }
+  .game-slide .game-header {
+    background: var(--purple); width: 100%; padding: 2vh 3vw;
+    font-size: clamp(2rem,6vw,4rem); font-weight: 900; color: white;
+    font-family: 'Arial Black', sans-serif; text-align: center;
+    letter-spacing: 2px;
+  }
+  .game-slide .question {
+    font-size: clamp(1.1rem,3vw,1.8rem); color: #DDDDFF; margin: 2vh 0 1vh;
+    text-align: center;
+  }
+  .game-slide .sound-bubble {
+    background: #2D1B69; border: 3px solid #9B59B6; border-radius: 16px;
+    padding: 1.5vh 4vw; font-size: clamp(2.5rem,7vw,5rem); font-weight: 900;
+    color: var(--yellow); font-family: 'Arial Black', sans-serif;
+    display: flex; align-items: center; gap: 16px; cursor: pointer;
+    transition: transform 0.15s; user-select: none;
+  }
+  .game-slide .sound-bubble:hover { transform: scale(1.04); }
+  .game-slide .sound-bubble:active { transform: scale(0.97); }
+  .game-slide .options {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2vh 3vw;
+    width: 90%; max-width: 900px; margin-top: 2.5vh;
+  }
+  .opt-btn {
+    border-radius: 14px; border: 2px solid transparent; padding: 2vh 2vw;
+    cursor: pointer; display: flex; align-items: center; gap: 14px;
+    font-size: clamp(1.3rem,3.5vw,2.2rem); font-weight: 700; color: white;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .opt-btn:hover { transform: scale(1.04); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+  .opt-btn:active { transform: scale(0.97); }
+  .opt-badge {
+    width: 44px; height: 44px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; font-weight: 900; flex-shrink: 0;
+  }
+  .opt-emoji { font-size: clamp(1.8rem,4vw,3rem); }
+
+  /* ════════════════════════════════════════
+     ANSWER SLIDE (100% English)
+  ════════════════════════════════════════ */
+  .answer-slide { background: var(--darkblue); }
+  .answer-slide .answer-header {
+    background: var(--green); width: 100%; padding: 2vh 3vw;
+    font-size: clamp(2rem,6vw,4rem); font-weight: 900; color: white;
+    font-family: 'Arial Black', sans-serif; text-align: center;
+  }
+  .answer-slide .sound-reminder {
+    font-size: clamp(2rem,5vw,4rem); font-weight: 900; color: var(--yellow);
+    font-family: 'Arial Black', sans-serif; margin: 1.5vh 0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .answer-slide .ans-options {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5vh 3vw;
+    width: 90%; max-width: 900px;
+  }
+  .ans-opt {
+    border-radius: 14px; border: 3px solid transparent; padding: 1.5vh 2vw;
+    display: flex; align-items: center; gap: 14px;
+    font-size: clamp(1.3rem,3.5vw,2.2rem); font-weight: 700;
+  }
+  .ans-opt.correct { background: var(--green); border-color: #2ECC71; color: white; }
+  .ans-opt.wrong { background: #922B21; border-color: #C0392B; color: #F1948A; }
+  .ans-opt .badge { width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.5); display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:900; flex-shrink:0; }
+  .ans-opt.correct .badge { background: #1A6B42; }
+  .ans-opt.wrong .badge { background: #641E16; }
+  .answer-slide .congrats {
+    font-size: clamp(1.1rem,2.5vw,1.8rem); font-weight: 700; color: #7DFDBD;
+    margin-top: 2.5vh; text-align: center;
+  }
+
+  /* ════════════════════════════════════════
+     REVIEW SLIDE
+  ════════════════════════════════════════ */
+  .review-slide { background: #1A1A2E; flex-direction: column; padding: 0; }
+  .review-slide .rev-header {
+    background: var(--purple); width: 100%; padding: 1.8vh 3vw;
+    font-size: clamp(1.5rem,4vw,3rem); font-weight: 900; color: white;
+    font-family: 'Arial Black', sans-serif; text-align: center;
+  }
+  .review-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5vw;
+    padding: 2vh 3vw; width: 100%; flex: 1;
+  }
+  .rev-card {
+    border-radius: 16px; border: 2px solid transparent;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 1.5vh 1vw; gap: 0.5vh;
+    cursor: pointer; transition: transform 0.15s;
+  }
+  .rev-card:hover { transform: scale(1.06); }
+  .rev-card:active { transform: scale(0.97); }
+  .rev-card .rc-emoji { font-size: clamp(2.5rem,6vw,5rem); }
+  .rev-card .rc-name { font-size: clamp(1rem,2.5vw,1.8rem); font-weight: 700; color: white; }
+  .rev-card .rc-sound { font-size: clamp(0.75rem,1.8vw,1.2rem); font-weight: 700; color: var(--yellow); }
+
+  /* ════════════════════════════════════════
+     GOODBYE SLIDE
+  ════════════════════════════════════════ */
+  #s-bye { background: radial-gradient(ellipse at center, #2D1B69 0%, #1A1A2E 70%); }
+  #s-bye .stars { font-size: 2.2rem; letter-spacing: 8px; }
+  #s-bye h1 { font-size: clamp(3rem,10vw,7rem); font-weight: 900; color: var(--yellow); font-family: 'Arial Black', sans-serif; }
+  #s-bye .sub { font-size: clamp(1.3rem,4vw,2.5rem); font-weight: 700; color: white; margin-top: 10px; }
+  #s-bye .zh { font-size: clamp(1.1rem,3vw,2rem); color: #C8A8FF; margin-top: 8px; }
+  #s-bye .see { font-size: clamp(1.1rem,3vw,2rem); font-weight: 700; color: #A8E6CF; margin-top: 10px; }
+  #s-bye .credit { font-size: clamp(0.75rem,1.8vw,1rem); color: #8888BB; margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<div id="deck">
+
+<!-- ══ SLIDE 1: Title ══════════════════════════════════════════ -->
+<div class="slide active" id="s-title">
+  <div class="stars">🐶&nbsp; 🐱&nbsp; 🐮&nbsp; 🦆&nbsp; 🐸&nbsp; 🐷&nbsp; 🐑&nbsp; 🦁</div>
+  <h1>ANIMALS</h1>
+  <h2>AND THEIR SOUNDS</h2>
+  <div class="zh">動物和牠們的叫聲</div>
+  <div class="meta">萬興國小 &nbsp;·&nbsp; May 19, 2025 &nbsp;·&nbsp; Grade 1 &amp; 2 &nbsp;一、二年級</div>
+  <div class="tagline">🌟 Let's Learn Together! 一起來學習！🌟</div>
+</div>
+
+<!-- ══ SLIDE 2: Dog ════════════════════════════════════════════ -->
+<div class="slide animal-slide" style="background:#FFF3E0;">
+  <div class="top-bar" style="background:#E65100;">
+    <span class="en-name">DOG</span>
+    <span class="zh-name">狗</span>
+  </div>
+  <div class="body">
+    <div class="emoji-box">🐶</div>
+    <div class="sound-box" style="border: 5px solid #FF6B35;">
+      <span class="label">This animal says:</span>
+      <span class="sound-word" style="color:#FF6B35;">WOOF!</span>
+      <span class="zh-sound" style="color:#E65100;">汪！</span>
+      <button class="play-btn" style="color:#FF6B35;" onclick="playSound('dog')">🔊 Tap to Hear!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 3: Cat ════════════════════════════════════════════ -->
+<div class="slide animal-slide" style="background:#F3E5F5;">
+  <div class="top-bar" style="background:#6A1B9A;">
+    <span class="en-name">CAT</span>
+    <span class="zh-name">貓</span>
+  </div>
+  <div class="body">
+    <div class="emoji-box">🐱</div>
+    <div class="sound-box" style="border: 5px solid #AB47BC;">
+      <span class="label">This animal says:</span>
+      <span class="sound-word" style="color:#AB47BC;">MEOW!</span>
+      <span class="zh-sound" style="color:#6A1B9A;">喵！</span>
+      <button class="play-btn" style="color:#AB47BC;" onclick="playSound('cat')">🔊 Tap to Hear!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 4: Cow ════════════════════════════════════════════ -->
+<div class="slide animal-slide" style="background:#E8F5E9;">
+  <div class="top-bar" style="background:#2E7D32;">
+    <span class="en-name">COW</span>
+    <span class="zh-name">牛</span>
+  </div>
+  <div class="body">
+    <div class="emoji-box">🐮</div>
+    <div class="sound-box" style="border: 5px solid #43A047;">
+      <span class="label">This animal says:</span>
+      <span class="sound-word" style="color:#43A047;">MOO!</span>
+      <span class="zh-sound" style="color:#2E7D32;">哞！</span>
+      <button class="play-btn" style="color:#43A047;" onclick="playSound('cow')">🔊 Tap to Hear!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 5: GAME TIME 1 (English only) ════════════════════ -->
+<div class="slide game-slide" id="game1">
+  <div class="game-header">🎮&nbsp; GAME TIME!</div>
+  <div class="question">Which animal makes this sound?</div>
+  <div class="sound-bubble" onclick="playSound('dog')">🔊&nbsp; WOOF!</div>
+  <div class="options">
+    <button class="opt-btn" style="background:#1565C0;" onclick="checkAnswer(this,'wrong','game1')">
+      <span class="opt-badge" style="background:#0D47A1;">A</span>
+      <span class="opt-emoji">🐱</span> CAT
+    </button>
+    <button class="opt-btn" style="background:#2E7D32;" onclick="checkAnswer(this,'correct','game1')">
+      <span class="opt-badge" style="background:#1B5E20;">B</span>
+      <span class="opt-emoji">🐶</span> DOG
+    </button>
+    <button class="opt-btn" style="background:#BF360C;" onclick="checkAnswer(this,'wrong','game1')">
+      <span class="opt-badge" style="background:#7F0000;">C</span>
+      <span class="opt-emoji">🐮</span> COW
+    </button>
+    <button class="opt-btn" style="background:#6A1B9A;" onclick="checkAnswer(this,'wrong','game1')">
+      <span class="opt-badge" style="background:#4A148C;">D</span>
+      <span class="opt-emoji">🦆</span> DUCK
+    </button>
+  </div>
+</div>
+
+<!-- ══ SLIDE 6: ANSWER TIME 1 (English only) ══════════════════ -->
+<div class="slide answer-slide">
+  <div class="answer-header">✅&nbsp; ANSWER TIME!</div>
+  <div class="sound-reminder">🔊&nbsp; WOOF!</div>
+  <div class="ans-options">
+    <div class="ans-opt wrong"><span class="badge">✗</span><span style="font-size:1.8rem;">🐱</span> CAT</div>
+    <div class="ans-opt correct"><span class="badge">✓</span><span style="font-size:1.8rem;">🐶</span> DOG</div>
+    <div class="ans-opt wrong"><span class="badge">✗</span><span style="font-size:1.8rem;">🐮</span> COW</div>
+    <div class="ans-opt wrong"><span class="badge">✗</span><span style="font-size:1.8rem;">🦆</span> DUCK</div>
+  </div>
+  <div class="congrats">🎉 The answer is: 🐶 DOG! Great job! 🎉</div>
+</div>
+
+<!-- ══ SLIDE 7: Duck ═══════════════════════════════════════════ -->
+<div class="slide animal-slide" style="background:#E3F2FD;">
+  <div class="top-bar" style="background:#1565C0;">
+    <span class="en-name">DUCK</span>
+    <span class="zh-name">鴨子</span>
+  </div>
+  <div class="body">
+    <div class="emoji-box">🦆</div>
+    <div class="sound-box" style="border: 5px solid #1E88E5;">
+      <span class="label">This animal says:</span>
+      <span class="sound-word" style="color:#1E88E5;">QUACK!</span>
+      <span class="zh-sound" style="color:#1565C0;">嘎嘎！</span>
+      <button class="play-btn" style="color:#1E88E5;" onclick="playSound('duck')">🔊 Tap to Hear!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 8: Frog ═══════════════════════════════════════════ -->
+<div class="slide animal-slide" style="background:#F1F8E9;">
+  <div class="top-bar" style="background:#388E3C;">
+    <span class="en-name">FROG</span>
+    <span class="zh-name">青蛙</span>
+  </div>
+  <div class="body">
+    <div class="emoji-box">🐸</div>
+    <div class="sound-box" style="border: 5px solid #66BB6A;">
+      <span class="label">This animal says:</span>
+      <span class="sound-word" style="color:#66BB6A;">RIBBIT!</span>
+      <span class="zh-sound" style="color:#388E3C;">呱呱！</span>
+      <button class="play-btn" style="color:#66BB6A;" onclick="playSound('frog')">🔊 Tap to Hear!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 9: Pig ════════════════════════════════════════════ -->
+<div class="slide animal-slide" style="background:#FCE4EC;">
+  <div class="top-bar" style="background:#C2185B;">
+    <span class="en-name">PIG</span>
+    <span class="zh-name">豬</span>
+  </div>
+  <div class="body">
+    <div class="emoji-box">🐷</div>
+    <div class="sound-box" style="border: 5px solid #E91E63;">
+      <span class="label">This animal says:</span>
+      <span class="sound-word" style="color:#E91E63;">OINK!</span>
+      <span class="zh-sound" style="color:#C2185B;">噜噜！</span>
+      <button class="play-btn" style="color:#E91E63;" onclick="playSound('pig')">🔊 Tap to Hear!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 10: GAME TIME 2 (English only) ═══════════════════ -->
+<div class="slide game-slide" id="game2">
+  <div class="game-header">🎮&nbsp; GAME TIME!</div>
+  <div class="question">Which animal makes this sound?</div>
+  <div class="sound-bubble" onclick="playSound('duck')">🔊&nbsp; QUACK!</div>
+  <div class="options">
+    <button class="opt-btn" style="background:#1565C0;" onclick="checkAnswer(this,'wrong','game2')">
+      <span class="opt-badge" style="background:#0D47A1;">A</span>
+      <span class="opt-emoji">🐸</span> FROG
+    </button>
+    <button class="opt-btn" style="background:#2E7D32;" onclick="checkAnswer(this,'wrong','game2')">
+      <span class="opt-badge" style="background:#1B5E20;">B</span>
+      <span class="opt-emoji">🐷</span> PIG
+    </button>
+    <button class="opt-btn" style="background:#BF360C;" onclick="checkAnswer(this,'correct','game2')">
+      <span class="opt-badge" style="background:#7F0000;">C</span>
+      <span class="opt-emoji">🦆</span> DUCK
+    </button>
+    <button class="opt-btn" style="background:#6A1B9A;" onclick="checkAnswer(this,'wrong','game2')">
+      <span class="opt-badge" style="background:#4A148C;">D</span>
+      <span class="opt-emoji">🐑</span> SHEEP
+    </button>
+  </div>
+</div>
+
+<!-- ══ SLIDE 11: ANSWER TIME 2 (English only) ════════════════ -->
+<div class="slide answer-slide">
+  <div class="answer-header">✅&nbsp; ANSWER TIME!</div>
+  <div class="sound-reminder">🔊&nbsp; QUACK!</div>
+  <div class="ans-options">
+    <div class="ans-opt wrong"><span class="badge">✗</span><span style="font-size:1.8rem;">🐸</span> FROG</div>
+    <div class="ans-opt wrong"><span class="badge">✗</span><span style="font-size:1.8rem;">🐷</span> PIG</div>
+    <div class="ans-opt correct"><span class="badge">✓</span><span style="font-size:1.8rem;">🦆</span> DUCK</div>
+    <div class="ans-opt wrong"><span class="badge">✗</span><span style="font-size:1.8rem;">🐑</span> SHEEP</div>
+  </div>
+  <div class="congrats">🎉 The answer is: 🦆 DUCK! Great job! 🎉</div>
+</div>
+
+<!-- ══ SLIDE 12: Sheep ════════════════════════════════════════ -->
+<div class="slide animal-slide" style="background:#FFF8E1;">
+  <div class="top-bar" style="background:#F57F17;">
+    <span class="en-name">SHEEP</span>
+    <span class="zh-name">羊</span>
+  </div>
+  <div class="body">
+    <div class="emoji-box">🐑</div>
+    <div class="sound-box" style="border: 5px solid #FFA726;">
+      <span class="label">This animal says:</span>
+      <span class="sound-word" style="color:#FFA726;">BAA!</span>
+      <span class="zh-sound" style="color:#F57F17;">咩咩！</span>
+      <button class="play-btn" style="color:#FFA726;" onclick="playSound('sheep')">🔊 Tap to Hear!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 13: Lion ════════════════════════════════════════ -->
+<div class="slide animal-slide" style="background:#FBE9E7;">
+  <div class="top-bar" style="background:#BF360C;">
+    <span class="en-name">LION</span>
+    <span class="zh-name">獅子</span>
+  </div>
+  <div class="body">
+    <div class="emoji-box">🦁</div>
+    <div class="sound-box" style="border: 5px solid #FF5722;">
+      <span class="label">This animal says:</span>
+      <span class="sound-word" style="color:#FF5722;">ROAR!</span>
+      <span class="zh-sound" style="color:#BF360C;">吼！</span>
+      <button class="play-btn" style="color:#FF5722;" onclick="playSound('lion')">🔊 Tap to Hear!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 14: GAME TIME 3 (English only) ══════════════════ -->
+<div class="slide game-slide" id="game3">
+  <div class="game-header">🎮&nbsp; GAME TIME!</div>
+  <div class="question">Which animal makes this sound?</div>
+  <div class="sound-bubble" onclick="playSound('lion')">🔊&nbsp; ROAR!</div>
+  <div class="options">
+    <button class="opt-btn" style="background:#1565C0;" onclick="checkAnswer(this,'wrong','game3')">
+      <span class="opt-badge" style="background:#0D47A1;">A</span>
+      <span class="opt-emoji">🐑</span> SHEEP
+    </button>
+    <button class="opt-btn" style="background:#2E7D32;" onclick="checkAnswer(this,'wrong','game3')">
+      <span class="opt-badge" style="background:#1B5E20;">B</span>
+      <span class="opt-emoji">🐮</span> COW
+    </button>
+    <button class="opt-btn" style="background:#BF360C;" onclick="checkAnswer(this,'wrong','game3')">
+      <span class="opt-badge" style="background:#7F0000;">C</span>
+      <span class="opt-emoji">🐷</span> PIG
+    </button>
+    <button class="opt-btn" style="background:#6A1B9A;" onclick="checkAnswer(this,'correct','game3')">
+      <span class="opt-badge" style="background:#4A148C;">D</span>
+      <span class="opt-emoji">🦁</span> LION
+    </button>
+  </div>
+</div>
+
+<!-- ══ SLIDE 15: ANSWER TIME 3 (English only) ════════════════ -->
+<div class="slide answer-slide">
+  <div class="answer-header">✅&nbsp; ANSWER TIME!</div>
+  <div class="sound-reminder">🔊&nbsp; ROAR!</div>
+  <div class="ans-options">
+    <div class="ans-opt wrong"><span class="badge">✗</span><span style="font-size:1.8rem;">🐑</span> SHEEP</div>
+    <div class="ans-opt wrong"><span class="badge">✗</span><span style="font-size:1.8rem;">🐮</span> COW</div>
+    <div class="ans-opt wrong"><span class="badge">✗</span><span style="font-size:1.8rem;">🐷</span> PIG</div>
+    <div class="ans-opt correct"><span class="badge">✓</span><span style="font-size:1.8rem;">🦁</span> LION</div>
+  </div>
+  <div class="congrats">🎉 The answer is: 🦁 LION! Great job! 🎉</div>
+</div>
+
+<!-- ══ SLIDE 16: Review ══════════════════════════════════════ -->
+<div class="slide review-slide">
+  <div class="rev-header">🌟 LET'S REVIEW! 複習時間！</div>
+  <div class="review-grid">
+    <div class="rev-card" style="background:rgba(230,81,0,0.35);border-color:#E65100;" onclick="playSound('dog')">
+      <span class="rc-emoji">🐶</span>
+      <span class="rc-name">Dog 狗</span>
+      <span class="rc-sound">WOOF! 🔊</span>
+    </div>
+    <div class="rev-card" style="background:rgba(106,27,154,0.35);border-color:#6A1B9A;" onclick="playSound('cat')">
+      <span class="rc-emoji">🐱</span>
+      <span class="rc-name">Cat 貓</span>
+      <span class="rc-sound">MEOW! 🔊</span>
+    </div>
+    <div class="rev-card" style="background:rgba(46,125,50,0.35);border-color:#2E7D32;" onclick="playSound('cow')">
+      <span class="rc-emoji">🐮</span>
+      <span class="rc-name">Cow 牛</span>
+      <span class="rc-sound">MOO! 🔊</span>
+    </div>
+    <div class="rev-card" style="background:rgba(21,101,192,0.35);border-color:#1565C0;" onclick="playSound('duck')">
+      <span class="rc-emoji">🦆</span>
+      <span class="rc-name">Duck 鴨子</span>
+      <span class="rc-sound">QUACK! 🔊</span>
+    </div>
+    <div class="rev-card" style="background:rgba(56,142,60,0.35);border-color:#388E3C;" onclick="playSound('frog')">
+      <span class="rc-emoji">🐸</span>
+      <span class="rc-name">Frog 青蛙</span>
+      <span class="rc-sound">RIBBIT! 🔊</span>
+    </div>
+    <div class="rev-card" style="background:rgba(194,24,91,0.35);border-color:#C2185B;" onclick="playSound('pig')">
+      <span class="rc-emoji">🐷</span>
+      <span class="rc-name">Pig 豬</span>
+      <span class="rc-sound">OINK! 🔊</span>
+    </div>
+    <div class="rev-card" style="background:rgba(245,127,23,0.35);border-color:#F57F17;" onclick="playSound('sheep')">
+      <span class="rc-emoji">🐑</span>
+      <span class="rc-name">Sheep 羊</span>
+      <span class="rc-sound">BAA! 🔊</span>
+    </div>
+    <div class="rev-card" style="background:rgba(191,54,12,0.35);border-color:#BF360C;" onclick="playSound('lion')">
+      <span class="rc-emoji">🦁</span>
+      <span class="rc-name">Lion 獅子</span>
+      <span class="rc-sound">ROAR! 🔊</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 17: Goodbye ═════════════════════════════════════ -->
+<div class="slide" id="s-bye">
+  <div class="stars">🐶&nbsp; 🐱&nbsp; 🐮&nbsp; 🦆&nbsp; 🐸&nbsp; 🐷&nbsp; 🐑&nbsp; 🦁</div>
+  <h1>GREAT JOB! 👏</h1>
+  <div class="sub">You learned 8 animal sounds!</div>
+  <div class="zh">你學會了 8 種動物的叫聲！🎉</div>
+  <div class="see">See you next time! 下次見！</div>
+  <div class="credit">Teacher Dom &nbsp;·&nbsp; 萬興國小 &nbsp;·&nbsp; May 2025</div>
+</div>
+
+</div><!-- #deck -->
+
+<!-- ── Navigation ── -->
+<button class="nav-btn" id="prev" onclick="changeSlide(-1)">&#8592;</button>
+<button class="nav-btn" id="next" onclick="changeSlide(1)">&#8594;</button>
+<div id="counter"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  SLIDE NAVIGATION
+// ══════════════════════════════════════════════════════════
+const slides = document.querySelectorAll('.slide');
+let cur = 0;
+
+function showSlide(n) {
+  slides[cur].classList.remove('active');
+  cur = (n + slides.length) % slides.length;
+  slides[cur].classList.add('active');
+  document.getElementById('counter').textContent = (cur+1) + ' / ' + slides.length;
+  document.getElementById('prev').style.opacity = cur === 0 ? '0.3' : '1';
+  document.getElementById('next').style.opacity = cur === slides.length-1 ? '0.3' : '1';
+}
+function changeSlide(dir) { showSlide(cur + dir); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+  if (e.key === 'ArrowLeft') changeSlide(-1);
+});
+
+// Touch swipe
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 50) changeSlide(dx < 0 ? 1 : -1);
+});
+
+showSlide(0);
+
+// ══════════════════════════════════════════════════════════
+//  QUIZ LOGIC
+// ══════════════════════════════════════════════════════════
+function checkAnswer(btn, result, gameId) {
+  const game = document.getElementById(gameId);
+  game.querySelectorAll('.opt-btn').forEach(b => b.style.pointerEvents = 'none');
+  if (result === 'correct') {
+    btn.style.background = '#27AE60';
+    btn.style.transform = 'scale(1.08)';
+    btn.style.boxShadow = '0 0 24px rgba(39,174,96,0.6)';
+    playCheer();
+  } else {
+    btn.style.background = '#C0392B';
+    btn.style.opacity = '0.75';
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+//  WEB AUDIO API — ANIMAL SOUNDS
+// ══════════════════════════════════════════════════════════
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function playSound(animal) {
+  const ctx = getCtx();
+  const fns = { dog:playDog, cat:playCat, cow:playCow, duck:playDuck,
+                frog:playFrog, pig:playPig, sheep:playSheep, lion:playLion };
+  if (fns[animal]) fns[animal](ctx);
+}
+
+// ── Helpers ──
+function osc(ctx, type, freq, start, dur, gainPeak=0.5) {
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.setValueAtTime(0, start);
+  g.gain.linearRampToValueAtTime(gainPeak, start + 0.04);
+  g.gain.linearRampToValueAtTime(0, start + dur);
+  o.connect(g); g.connect(ctx.destination);
+  o.start(start); o.stop(start + dur + 0.05);
+  return {o, g};
+}
+
+function noiseBurst(ctx, start, dur, freq, q, gainPeak=0.4) {
+  const bufLen = Math.ceil(ctx.sampleRate * dur);
+  const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufLen; i++) {
+    const t = i / ctx.sampleRate;
+    data[i] = (Math.random()*2-1) * Math.exp(-t * (8/dur));
+  }
+  const src = ctx.createBufferSource(); src.buffer = buf;
+  const flt = ctx.createBiquadFilter(); flt.type = 'bandpass';
+  flt.frequency.value = freq; flt.Q.value = q;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0, start);
+  g.gain.linearRampToValueAtTime(gainPeak, start + 0.03);
+  g.gain.linearRampToValueAtTime(0, start + dur);
+  src.connect(flt); flt.connect(g); g.connect(ctx.destination);
+  src.start(start); src.stop(start + dur + 0.05);
+}
+
+// ── DOG: WOOF WOOF ──
+function playDog(ctx) {
+  const now = ctx.currentTime;
+  [0, 0.32, 0.58].forEach(offset => {
+    noiseBurst(ctx, now+offset, 0.22, 400, 2.5, 0.55);
+    const {o} = osc(ctx,'sawtooth',280,now+offset,0.20,0.35);
+    o.frequency.exponentialRampToValueAtTime(220, now+offset+0.18);
+  });
+}
+
+// ── CAT: MEOW ──
+function playCat(ctx) {
+  const now = ctx.currentTime;
+  function meowOnce(t) {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(420, t);
+    o.frequency.linearRampToValueAtTime(750, t+0.28);
+    o.frequency.linearRampToValueAtTime(520, t+0.62);
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(0.5, t+0.06);
+    g.gain.linearRampToValueAtTime(0.35, t+0.55);
+    g.gain.linearRampToValueAtTime(0, t+0.7);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(t); o.stop(t+0.75);
+  }
+  meowOnce(now); meowOnce(now+0.9);
+}
+
+// ── COW: MOO ──
+function playCow(ctx) {
+  const now = ctx.currentTime;
+  function mooOnce(t) {
+    [130,260,390].forEach((f,i) => {
+      const {o,g} = osc(ctx,'sawtooth',f,t,1.0,0.3/(i+1));
+      o.frequency.setValueAtTime(f,t);
+      o.frequency.linearRampToValueAtTime(f*1.05, t+0.4);
+      o.frequency.linearRampToValueAtTime(f, t+1.0);
+    });
+  }
+  mooOnce(now); mooOnce(now+1.2);
+}
+
+// ── DUCK: QUACK ──
+function playDuck(ctx) {
+  const now = ctx.currentTime;
+  [0, 0.28, 0.52].forEach(offset => {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'square';
+    o.frequency.setValueAtTime(900, now+offset);
+    o.frequency.exponentialRampToValueAtTime(500, now+offset+0.18);
+    g.gain.setValueAtTime(0, now+offset);
+    g.gain.linearRampToValueAtTime(0.35, now+offset+0.02);
+    g.gain.linearRampToValueAtTime(0, now+offset+0.2);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(now+offset); o.stop(now+offset+0.25);
+    noiseBurst(ctx, now+offset, 0.18, 800, 1.5, 0.2);
+  });
+}
+
+// ── FROG: RIBBIT ──
+function playFrog(ctx) {
+  const now = ctx.currentTime;
+  function ribbit(t) {
+    // "r" burst
+    noiseBurst(ctx, t, 0.1, 350, 3, 0.4);
+    // "it" tone
+    osc(ctx,'square',420, t+0.12, 0.12, 0.35);
+  }
+  ribbit(now); ribbit(now+0.32); ribbit(now+0.62);
+}
+
+// ── PIG: OINK ──
+function playPig(ctx) {
+  const now = ctx.currentTime;
+  function oink(t) {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(280, t);
+    o.frequency.linearRampToValueAtTime(380, t+0.12);
+    o.frequency.linearRampToValueAtTime(220, t+0.28);
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(0.45, t+0.05);
+    g.gain.linearRampToValueAtTime(0, t+0.3);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(t); o.stop(t+0.35);
+    noiseBurst(ctx, t, 0.12, 400, 2, 0.2);
+  }
+  oink(now); oink(now+0.38); oink(now+0.72);
+}
+
+// ── SHEEP: BAA ──
+function playSheep(ctx) {
+  const now = ctx.currentTime;
+  function baa(t) {
+    const o = ctx.createOscillator();
+    const lfo = ctx.createOscillator();
+    const lfoG = ctx.createGain();
+    const g = ctx.createGain();
+    o.type = 'sine'; o.frequency.value = 480;
+    lfo.type = 'sine'; lfo.frequency.value = 7;
+    lfoG.gain.value = 25;
+    lfo.connect(lfoG); lfoG.connect(o.frequency);
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(0.5, t+0.08);
+    g.gain.setValueAtTime(0.5, t+0.45);
+    g.gain.linearRampToValueAtTime(0, t+0.65);
+    o.connect(g); g.connect(ctx.destination);
+    lfo.start(t); lfo.stop(t+0.7);
+    o.start(t); o.stop(t+0.7);
+  }
+  baa(now); baa(now+0.85);
+}
+
+// ── LION: ROAR ──
+function playLion(ctx) {
+  const now = ctx.currentTime;
+  // Low rumble
+  [80,160,240].forEach((f,i) => {
+    const {o,g} = osc(ctx,'sawtooth',f,now,1.5,0.4/(i+1));
+    o.frequency.linearRampToValueAtTime(f*1.3, now+0.7);
+    o.frequency.linearRampToValueAtTime(f*0.9, now+1.5);
+  });
+  // Noise layer
+  const bufLen = Math.ceil(ctx.sampleRate * 1.5);
+  const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < bufLen; i++) d[i] = (Math.random()*2-1)*0.5;
+  const src = ctx.createBufferSource(); src.buffer = buf;
+  const flt = ctx.createBiquadFilter(); flt.type = 'lowpass'; flt.frequency.value = 300;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0, now);
+  g.gain.linearRampToValueAtTime(0.4, now+0.2);
+  g.gain.linearRampToValueAtTime(0.3, now+1.2);
+  g.gain.linearRampToValueAtTime(0, now+1.5);
+  src.connect(flt); flt.connect(g); g.connect(ctx.destination);
+  src.start(now); src.stop(now+1.55);
+}
+
+// ── Cheer sound for correct answer ──
+function playCheer(ctx2) {
+  const ctx = getCtx();
+  [523,659,784,1047].forEach((f,i) => {
+    osc(ctx,'sine',f, ctx.currentTime+i*0.12, 0.18, 0.3);
+  });
+}
+</script>
+</body>
+</html>
